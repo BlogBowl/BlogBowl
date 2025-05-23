@@ -1,3 +1,9 @@
+PATH
+  remote: core
+  specs:
+    core (0.1.0)
+      rails (>= 8.0.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -294,6 +300,7 @@ PLATFORMS
 DEPENDENCIES
   bootsnap
   brakeman
+  core!
   cssbundling-rails
   debug
   jbuilder
