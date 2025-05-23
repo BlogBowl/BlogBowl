@@ -10,7 +10,7 @@ development:
   username: development
   password: development
   host: localhost
-  port: 5433
+  port: 5435
 
 test:
   <<: *default
