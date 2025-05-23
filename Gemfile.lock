@@ -212,6 +212,9 @@ GEM
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.15)
+    rack-cors (3.0.0)
+      logger
+      rack (>= 3.0.14)
     rack-mini-profiler (3.3.1)
       rack (>= 1.2.0)
     rack-session (2.1.1)
@@ -359,6 +362,7 @@ DEPENDENCIES
   pg
   propshaft
   puma (>= 5.0)
+  rack-cors (~> 3.0)
   rails (~> 8.0.2)
   rubocop-rails-omakase
   ruby-vips (~> 2.2)

@@ -68,3 +68,5 @@ gem "cancancan", "~> 3.6"
 gem "pagy", "~> 9.3"
 
 gem "ruby-vips", "~> 2.2"
+
+gem "rack-cors", "~> 3.0"
