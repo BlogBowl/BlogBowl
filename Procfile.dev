@@ -1,3 +1,3 @@
-web: env RUBY_DEBUG_OPEN=true bin/rails server
+web: env OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES RUBY_DEBUG_OPEN=true bin/rails server --port 3000
 js: bun run build --watch
 css: bun run build:css --watch
