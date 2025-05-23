@@ -3,7 +3,10 @@
   "private": true,
   "scripts": {
     "build": "bun bun.config.js",
-    "build:css": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify"
+    "build:css": "bun build:public:css && bun build:application:css",
+    "build:css:watch": "concurrently \"bun build:public:css --watch\" \"bun build:application:css --watch\"",
+    "build:application:css": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
+    "build:public:css": "bunx @tailwindcss/cli -i ./core/app/assets/stylesheets/core/public/basic.tailwind.css -o ./app/assets/builds/public/basic.css --minify"
   },
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
@@ -13,6 +16,7 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
+    "concurrently": "^9.1.2",
     "daisyui": "^5.0.37"
   }
 }
