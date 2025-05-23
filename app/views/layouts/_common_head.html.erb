@@ -1,0 +1,46 @@
+<% is_editor ||= false %>
+<head>
+  <title><%= (yield(:title) + " | " unless yield(:title).blank?).to_s + "BlogBowl" %></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <%= action_cable_meta_tag %>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <% if is_editor&.present? or is_editor %>
+    <%= stylesheet_link_tag "editor/editor", "data-turbo-track": Rails.env.production? ? "reload" : "" %>
+  <% else %>
+    <%= render "layouts/chatwoot" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": Rails.env.production? ? "reload" : "" %>
+  <% end %>
+  <%= javascript_include_tag "application", "data-turbo-track": Rails.env.production? ? "reload" : "", type: "module" %>
+
+  <%= stylesheet_link_tag "https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@main/css/iconoir.css", "data-turbo": "false" %>
+  <%= favicon_link_tag unless Rails.env.development? %>
+  <script>
+      window.cfg = {
+          host: "https://<%= Rails.application.routes.default_url_options[:host] %>",
+          analyticsHost: "https://analytics.<%= Rails.application.routes.default_url_options[:host] %>",
+      };
+  </script>
+
+  <% unless is_editor %>
+    <%= render "layouts/chatwoot" %>
+  <% end %>
+
+  <script>
+      // Remove Chatwoot if it exists when transitioning to editor pages
+      document.addEventListener('turbo:load', function () {
+          const isEditor = <%= is_editor %>;
+          const chatwootDiv = document.getElementById('cw-bubble-holder');
+
+          if (chatwootDiv) {
+              if (isEditor) {
+                  chatwootDiv.style.display = 'none'
+              } else {
+                  chatwootDiv.style.display = 'block'
+              }
+          }
+      });
+  </script>
+</head>
