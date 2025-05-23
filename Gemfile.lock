@@ -331,6 +331,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  active_storage_validations (~> 2.0)
   bootsnap
   brakeman
   core!
