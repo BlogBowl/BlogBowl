@@ -72,3 +72,5 @@ gem "ruby-vips", "~> 2.2"
 gem "rack-cors", "~> 3.0"
 
 gem "hotwire-livereload", "~> 1.4.1", :group => :development
+
+gem 'sidekiq'

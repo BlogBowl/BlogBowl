@@ -14,6 +14,7 @@ PATH
       postmark
       rack-mini-profiler (~> 3.3)
       rails (>= 8.0.2)
+      sidekiq (~> 8.0.7)
       stackprof (~> 0.2.27)
       truemail
 
@@ -278,6 +279,8 @@ GEM
     rdoc (6.14.0)
       erb
       psych (>= 4.0.0)
+    redis-client (0.25.2)
+      connection_pool
     regexp_parser (2.10.0)
     reline (0.6.1)
       io-console (~> 0.5)
@@ -314,6 +317,12 @@ GEM
       ffi (~> 1.12)
       logger
     securerandom (0.4.1)
+    sidekiq (8.0.7)
+      connection_pool (>= 2.5.0)
+      json (>= 2.9.0)
+      logger (>= 1.6.2)
+      rack (>= 3.1.0)
+      redis-client (>= 0.23.2)
     simpleidn (0.2.3)
     solid_cable (3.0.8)
       actioncable (>= 7.2)
@@ -392,6 +401,7 @@ DEPENDENCIES
   rails (~> 8.0.2)
   rubocop-rails-omakase
   ruby-vips (~> 2.2)
+  sidekiq
   solid_cable
   solid_cache
   solid_queue
