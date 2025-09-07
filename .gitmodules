@@ -1,0 +1,6 @@
+[submodule "submodules/core"]
+	path = submodules/core
+	url = https://github.com/BlogBowl/blogbowl-core
+[submodule "submodules/editor"]
+	path = submodules/editor
+	url = https://github.com/BlogBowl/blogbowl-editor
