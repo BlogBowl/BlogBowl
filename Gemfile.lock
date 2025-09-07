@@ -407,6 +407,7 @@ DEPENDENCIES
   solid_queue
   stimulus-rails
   thruster
+  truemail
   turbo-rails
   tzinfo-data
   web-console
