@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_23_122831) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_06_140320) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -60,21 +60,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_122831) do
     t.text "short_description"
     t.text "long_description"
     t.boolean "active", default: true
-    t.bigint "member_id", null: false
     t.string "slug"
+    t.bigint "member_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["member_id"], name: "index_authors_on_member_id"
   end
 
   create_table "categories", force: :cascade do |t|
-    t.bigint "page_id", null: false
     t.string "name"
     t.text "description"
     t.integer "parent_id"
     t.string "slug"
     t.string "color"
     t.string "image_url"
+    t.bigint "page_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["page_id", "name"], name: "index_categories_on_page_id_and_name", unique: true, where: "(parent_id IS NULL)"
@@ -98,13 +98,73 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_122831) do
   end
 
   create_table "members", force: :cascade do |t|
+    t.string "permissions", default: [], array: true
     t.bigint "user_id", null: false
     t.bigint "workspace_id", null: false
-    t.string "permissions", default: [], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_members_on_user_id"
     t.index ["workspace_id"], name: "index_members_on_workspace_id"
+  end
+
+  create_table "newsletter_emails", force: :cascade do |t|
+    t.string "subject"
+    t.string "preview"
+    t.string "content_html"
+    t.jsonb "content_json"
+    t.datetime "sent_at"
+    t.string "status", default: "draft", null: false
+    t.string "slug"
+    t.datetime "scheduled_at"
+    t.string "postmark_tag"
+    t.string "postmark_bulk_id"
+    t.string "job_id"
+    t.integer "deliver_count", default: 0
+    t.integer "open_count", default: 0
+    t.integer "click_count", default: 0
+    t.integer "bounce_count", default: 0
+    t.integer "spam_count", default: 0
+    t.bigint "author_id"
+    t.bigint "newsletter_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_newsletter_emails_on_author_id"
+    t.index ["newsletter_id"], name: "index_newsletter_emails_on_newsletter_id"
+    t.index ["postmark_tag"], name: "index_newsletter_emails_on_postmark_tag", unique: true
+  end
+
+  create_table "newsletter_settings", force: :cascade do |t|
+    t.string "webhook_url"
+    t.string "webhook_auth"
+    t.string "domain"
+    t.integer "postmark_domain_id"
+    t.string "sender_name"
+    t.string "reply_to_email"
+    t.string "sender"
+    t.string "sender_email"
+    t.string "footer"
+    t.bigint "newsletter_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["domain"], name: "index_newsletter_settings_on_domain"
+    t.index ["newsletter_id"], name: "index_newsletter_settings_on_newsletter_id"
+    t.index ["postmark_domain_id"], name: "index_newsletter_settings_on_postmark_domain_id", unique: true
+  end
+
+  create_table "newsletters", force: :cascade do |t|
+    t.bigint "workspace_id", null: false
+    t.text "name"
+    t.text "name_slug"
+    t.bigint "postmark_server_id"
+    t.text "postmark_server_token"
+    t.text "uuid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["postmark_server_id"], name: "index_newsletters_on_postmark_server_id", unique: true
+    t.index ["postmark_server_token"], name: "index_newsletters_on_postmark_server_token", unique: true
+    t.index ["uuid"], name: "index_newsletters_on_uuid", unique: true
+    t.index ["workspace_id", "name_slug"], name: "index_newsletters_on_workspace_id_and_name_slug", unique: true
+    t.index ["workspace_id"], name: "index_newsletters_on_workspace_id"
   end
 
   create_table "page_settings", force: :cascade do |t|
@@ -120,7 +180,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_122831) do
     t.text "cta_description"
     t.string "cta_button"
     t.string "cta_button_link"
-    t.boolean "subfolder_enabled", default: false, null: false
+    t.boolean "subfolder_enabled", default: false
     t.string "theme"
     t.boolean "cta_enabled"
     t.boolean "newsletter_cta_enabled"
@@ -137,8 +197,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_122831) do
     t.string "name"
     t.string "header_cta_button"
     t.string "header_cta_button_link"
+    t.bigint "newsletter_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["newsletter_id"], name: "index_page_settings_on_newsletter_id"
     t.index ["page_id"], name: "index_page_settings_on_page_id"
   end
 
@@ -148,6 +210,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_122831) do
     t.string "name"
     t.string "domain"
     t.string "name_slug"
+    t.string "base_domain"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["domain"], name: "index_pages_on_domain", unique: true
@@ -166,11 +229,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_122831) do
   end
 
   create_table "post_revisions", force: :cascade do |t|
-    t.bigint "post_id", null: false
     t.string "title"
     t.text "content_html"
-    t.jsonb "content_json"
     t.integer "kind", default: 0, null: false
+    t.bigint "post_id", null: false
+    t.jsonb "content_json"
     t.text "seo_title"
     t.text "seo_description"
     t.text "og_title"
@@ -184,20 +247,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_122831) do
   end
 
   create_table "posts", force: :cascade do |t|
-    t.bigint "page_id", null: false
-    t.bigint "category_id"
     t.string "title"
     t.text "content_html"
+    t.integer "status", default: 0, null: false
+    t.string "slug"
     t.jsonb "content_json"
     t.text "seo_title"
     t.text "seo_description"
     t.text "og_title"
     t.text "og_description"
-    t.string "slug"
-    t.string "description"
-    t.integer "status", default: 0, null: false
     t.datetime "archived_at"
     t.datetime "first_published_at"
+    t.string "description"
+    t.bigint "page_id", null: false
+    t.bigint "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["category_id"], name: "index_posts_on_category_id"
@@ -214,18 +277,49 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_122831) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "subscribers", force: :cascade do |t|
+    t.string "email", null: false
+    t.boolean "verified", default: false, null: false
+    t.boolean "active", default: false, null: false
+    t.string "verification_token"
+    t.string "status", null: false
+    t.datetime "verified_at"
+    t.datetime "suppressed_at"
+    t.datetime "verification_email_sent_at"
+    t.string "suppression_reason"
+    t.string "note"
+    t.string "ip_address"
+    t.integer "deliver_count", default: 0
+    t.integer "open_count", default: 0
+    t.integer "click_count", default: 0
+    t.integer "bounce_count", default: 0
+    t.integer "spam_count", default: 0
+    t.string "country"
+    t.string "city"
+    t.bigint "newsletter_id"
+    t.bigint "page_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_subscribers_on_email"
+    t.index ["ip_address"], name: "index_subscribers_on_ip_address"
+    t.index ["newsletter_id"], name: "index_subscribers_on_newsletter_id"
+    t.index ["page_id"], name: "index_subscribers_on_page_id"
+    t.index ["verification_token"], name: "index_subscribers_on_verification_token", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", null: false
     t.string "password_digest", null: false
+    t.jsonb "dismissed_notices", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   create_table "workspace_settings", force: :cascade do |t|
-    t.bigint "workspace_id", null: false
     t.string "html_lang"
     t.string "locale"
+    t.bigint "workspace_id", null: false
     t.string "title"
     t.boolean "with_watermark", default: true, null: false
     t.datetime "created_at", null: false
@@ -249,6 +343,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_122831) do
   add_foreign_key "links", "pages", on_delete: :cascade
   add_foreign_key "members", "users", on_delete: :cascade
   add_foreign_key "members", "workspaces", on_delete: :cascade
+  add_foreign_key "newsletter_emails", "authors", on_delete: :nullify
+  add_foreign_key "newsletter_emails", "newsletters", on_delete: :cascade
+  add_foreign_key "newsletter_settings", "newsletters", on_delete: :cascade
+  add_foreign_key "newsletters", "workspaces", on_delete: :cascade
+  add_foreign_key "page_settings", "newsletters", on_delete: :cascade
   add_foreign_key "page_settings", "pages", on_delete: :cascade
   add_foreign_key "pages", "workspaces", on_delete: :cascade
   add_foreign_key "post_authors", "authors", on_delete: :cascade
@@ -257,5 +356,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_122831) do
   add_foreign_key "posts", "categories", on_delete: :nullify
   add_foreign_key "posts", "pages", on_delete: :cascade
   add_foreign_key "sessions", "users"
+  add_foreign_key "subscribers", "newsletters", on_delete: :cascade
+  add_foreign_key "subscribers", "pages", on_delete: :nullify
   add_foreign_key "workspace_settings", "workspaces", on_delete: :cascade
 end

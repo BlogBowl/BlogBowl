@@ -2,11 +2,10 @@ services:
   postgres:
     image: postgres:latest
     environment:
-      POSTGRES_MULTIPLE_DATABASES: blogbowl,analytics
+      POSTGRES_DB: blogbowl
       POSTGRES_USER: development
       POSTGRES_PASSWORD: development
     volumes:
-      - ./dev/init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh
       - bb_postgres_data:/var/lib/postgresql/data
     ports:
       - "5435:5432"
