@@ -31,6 +31,10 @@ const build = async (config) => {
       console.log(`File changed: ${filename}. Rebuilding...`);
       build(config);
     });
+    fs.watch(path.join(process.cwd(), "submodules/editor"), { recursive: true }, (eventType, filename) => {
+      console.log(`File changed: ${filename}. Rebuilding...`);
+      build(config);
+    });
   } else {
     process.exit(0);
   }
