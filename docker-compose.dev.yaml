@@ -20,5 +20,19 @@ services:
           cpus: '1'
           memory: 128M
 
+  redis:
+    image: redis:latest
+    command: redis-server --appendonly yes
+    volumes:
+      - blogbowl_redis_data:/data
+    ports:
+      - "6380:6379"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 128M
+
 volumes:
   bb_postgres_data:
+  blogbowl_redis_data:
