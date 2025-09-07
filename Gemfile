@@ -59,7 +59,7 @@ end
 
 gem "letter_opener", "~> 1.10", group: :development
 
-gem "core", path: "core"
+gem "core", path: "submodules/core"
 
 gem "active_storage_validations", "~> 2.0"
 
@@ -70,3 +70,5 @@ gem "pagy", "~> 9.3"
 gem "ruby-vips", "~> 2.2"
 
 gem "rack-cors", "~> 3.0"
+
+gem "hotwire-livereload", "~> 1.4.1", :group => :development
