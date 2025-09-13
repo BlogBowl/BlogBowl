@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_06_140320) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_09_184008) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -310,6 +310,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_06_140320) do
   create_table "users", force: :cascade do |t|
     t.string "email", null: false
     t.string "password_digest", null: false
+    t.string "first_name"
+    t.string "last_name"
     t.jsonb "dismissed_notices", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

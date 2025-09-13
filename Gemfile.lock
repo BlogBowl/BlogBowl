@@ -14,9 +14,11 @@ PATH
       postmark
       rack-mini-profiler (~> 3.3)
       rails (>= 8.0.2)
+      redis
       sidekiq (~> 8.0.7)
       stackprof (~> 0.2.27)
       truemail
+      webmock
 
 GEM
   remote: https://rubygems.org/
@@ -118,6 +120,9 @@ GEM
     connection_pool (2.5.3)
     countries (8.0.4)
       unaccent (~> 0.3)
+    crack (1.0.0)
+      bigdecimal
+      rexml
     crass (1.0.6)
     cssbundling-rails (1.4.3)
       railties (>= 6.0.0)
@@ -139,6 +144,7 @@ GEM
       raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    hashdiff (1.2.1)
     hotwire-livereload (1.4.1)
       actioncable (>= 6.0.0)
       listen (>= 3.0.0)
@@ -279,11 +285,14 @@ GEM
     rdoc (6.14.0)
       erb
       psych (>= 4.0.0)
+    redis (5.3.0)
+      redis-client (>= 0.22.0)
     redis-client (0.25.2)
       connection_pool
     regexp_parser (2.10.0)
     reline (0.6.1)
       io-console (~> 0.5)
+    rexml (3.4.4)
     rubocop (1.75.7)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
@@ -367,6 +376,10 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
+    webmock (3.25.1)
+      addressable (>= 2.8.0)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
     websocket-driver (0.7.7)
       base64
       websocket-extensions (>= 0.1.0)
