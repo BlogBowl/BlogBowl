@@ -1,5 +1,5 @@
 infra: docker compose -f docker-compose.dev.yaml up
 web: env OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES RUBY_DEBUG_OPEN=true bin/rails server --port 3000
-sidekiq: ./dev/wait_for_it.sh -t 0 localhost:6380 -- bundle exec sidekiq -c 1
+sidekiq: bundle exec sidekiq -c 1
 js: bun run build --watch
 css: bun run build:css:watch
