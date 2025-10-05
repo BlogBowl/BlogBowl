@@ -1,0 +1,62 @@
+# Name of the GitHub Actions workflow.
+name: Release
+
+# This workflow is triggered whenever a new release is created in the GitHub UI.
+# To trigger this: Go to your repo's "Releases" page and click "Draft a new release".
+on:
+  release:
+    types: [created]
+env:
+  DOCKER_IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/blogbowl
+
+jobs:
+  # --------------------------------------------------
+  # JOB: Build the Docker image and push it to Docker Hub
+  # --------------------------------------------------
+  build-and-push-docker:
+    name: Build and Push Docker Image
+    # Runs on the latest version of Ubuntu provided by GitHub.
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository's code at the specific tag of the release.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        # CRITICAL: This ensures that your submodule (the core engine) is
+        # checked out along with the parent repository.
+        with:
+          submodules: 'recursive'
+          # This explicitly checks out the code at the specific tag that triggered the release event.
+          ref: ${{ github.ref_name }}
+
+      # Step 2: Log in to Docker Hub using the secrets.
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          # These secrets must be created in your repository settings:
+          # Settings > Secrets and variables > Actions
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Step 3: Automatically generate tags and labels for the Docker image.
+      # This action creates smart tags based on the Git tag from the release.
+      # For a release with tag `v1.2.3`, it will create Docker tags `your-name/your-app:1.2.3` and `your-name/your-app:latest`.
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_IMAGE_NAME }}
+          tags: |
+            type=schedule,pattern=latest
+            type=ref,event=tag
+
+      # Step 4: Build the Docker image and push it to the Docker Hub registry.
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          # The tags generated in the previous step are used here.
+          tags: ${{ steps.meta.outputs.tags }}
+          # The labels generated in the previous step are used here.
+          labels: ${{ steps.meta.outputs.labels }}
