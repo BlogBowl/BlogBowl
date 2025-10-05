@@ -62,3 +62,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           # The labels generated in the previous step are used here.
           labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            "npmrc=${{ secrets.NPMRC_FILE }}"
