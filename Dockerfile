@@ -49,7 +49,10 @@ RUN bundle install && \
     bundle exec bootsnap precompile --gemfile
 
 # Install node modules
-RUN bun install --frozen-lockfile
+RUN --mount=type=secret,id=npmrc \
+    cat /run/secrets/npmrc > .npmrc && \
+    bun install --frozen-lockfile && \
+    rm .npmrc
 
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
