@@ -1,24 +1,32 @@
-# README
+<p align="center">
+  <img src="https://framerusercontent.com/images/tjgm6B1wvt21XiKVxIqd25n6aQ.png" alt="BlogBowl Logo" width="100">
+</p>
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+<h1 align="center">BlogBowl</h1>
 
-Things you may want to cover:
+<p align="center">
+  <i>Launch a Blog, Changelog, and Help Center in 60 seconds - No code, no headaches. Plug-and-play blogging platform. Built-in notion editor. SEO optimized templates.</i>
+</p>
 
-* Ruby version
+<p align="center">
+  <a href="https://github.com/BlogBowl/BlogBowl/master/LICENSE">
+    <img src="https://img.shields.io/github/license/BlogBowl/BlogBowl.svg" alt="MIT License" />
+  </a>
+</p>
 
-* System dependencies
+---
 
-* Configuration
+## 🚀 What is BlogBowl?
+BlogBowl is an open-source, self-hosted blogging platform designed for **blogs, product changelogs, and help documentation**.
 
-* Database creation
+- Launch blogs, changelogs, and help centers **in minutes**.
+- Templates are **SEO optimized and lightning-fast**.
+- Focus on content - BlogBowl handles the technical setup, layouts, and newsletter management.
 
-* Database initialization
+![Alt Text for your GIF](https://blogbowl-gen.sfo3.cdn.digitaloceanspaces.com/other/blogbowl-demo-gif.gif)
 
-* How to run the test suite
+[📺 Watch the full 5-minute demo video](https://www.blogbowl.io/blog-hosting#demo)
 
-* Services (job queues, cache servers, search engines, etc.)
+## 🛠 Getting started:
 
-* Deployment instructions
 
-* ...
