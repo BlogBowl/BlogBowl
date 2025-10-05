@@ -6,6 +6,8 @@ name: Release
 on:
   release:
     types: [created]
+  workflow_dispatch:
+
 env:
   DOCKER_IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/blogbowl
 
