@@ -22,7 +22,7 @@ test:
 
 production:
   <<: *default
-  username: <%= ENV.fetch('DB_USERNAME', Rails.application.credentials[Rails.env.to_sym][:db][:username]) %>
-  password: <%= ENV.fetch('DB_PASSWORD', Rails.application.credentials[Rails.env.to_sym][:db][:password]) %>
-  host: <%= ENV.fetch('DB_HOST', Rails.application.credentials[Rails.env.to_sym][:db][:host]) %>
-  port: <%= ENV.fetch('DB_PORT', Rails.application.credentials[Rails.env.to_sym][:db][:port]) %>
+  username: <%= ENV.fetch('DB_USERNAME', Rails.application.dig(Rails.env.to_sym, :db, :username)) %>
+  password: <%= ENV.fetch('DB_PASSWORD', Rails.application.dig(Rails.env.to_sym, :db, :password)) %>
+  host: <%= ENV.fetch('DB_HOST', Rails.application.dig(Rails.env.to_sym, :db, :host)) %>
+  port: <%= ENV.fetch('DB_PORT', Rails.application.dig(Rails.env.to_sym, :db, :port)) %>
