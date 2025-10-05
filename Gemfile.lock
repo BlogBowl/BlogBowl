@@ -12,6 +12,7 @@ PATH
       nokogiri (~> 1.18)
       pagy (~> 9.3)
       postmark
+      rack-cors
       rack-mini-profiler (~> 3.3)
       rails (>= 8.0.2)
       redis
