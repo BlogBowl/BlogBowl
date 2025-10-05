@@ -23,7 +23,7 @@ BlogBowl is an open-source, self-hosted blogging platform designed for **blogs, 
 - Templates are **SEO optimized and lightning-fast**.
 - Focus on content - BlogBowl handles the technical setup, layouts, and newsletter management.
 
-![Alt Text for your GIF](https://blogbowl-gen.sfo3.cdn.digitaloceanspaces.com/other/blogbowl-demo-gif.gif)
+![Alt Text for your GIF](https://blogbowl-gen.sfo3.cdn.digitaloceanspaces.com/other/blogbowl-demo.gif)
 
 [📺 Watch the full 5-minute demo video](https://www.blogbowl.io/blog-hosting#demo)
 
