@@ -1,0 +1,16 @@
+letter_opener:
+  delivery_method: :letter_opener_web
+
+disabled:
+  delivery_method: :test
+
+smtp:
+  delivery_method: :smtp
+  smtp_settings:
+    address: <%= ENV.fetch('SMTP_MAIL_ADDRESS', Rails.application.credentials[Rails.env.to_sym][:smtp_mail][:address]) %>
+    port: <%= ENV.fetch('SMTP_MAIL_PORT', Rails.application.credentials[Rails.env.to_sym][:smtp_mail][:port]) %>
+    domain: <%= ENV.fetch('SMTP_MAIL_DOMAIN', Rails.application.credentials[Rails.env.to_sym][:smtp_mail][:domain]) %>
+    user_name: <%= ENV.fetch('SMTP_MAIL_USER_NAME', Rails.application.credentials[Rails.env.to_sym][:smtp_mail][:user_name]) %>
+    password: <%= ENV.fetch('SMTP_MAIL_PASSWORD', Rails.application.credentials[Rails.env.to_sym][:smtp_mail][:password]) %>
+    authentication: <%= ENV.fetch('SMTP_MAIL_AUTHENTICATION', Rails.application.credentials[Rails.env.to_sym][:smtp_mail][:authentication]) %>
+    enable_starttls_auto: <%= ENV.fetch('SMTP_MAIL_ENABLE_STARTTLS_AUTO', Rails.application.credentials[Rails.env.to_sym][:smtp_mail][:enable_starttls_auto]) %>
