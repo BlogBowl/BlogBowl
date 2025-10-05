@@ -40,16 +40,16 @@ RUN curl -fsSL https://bun.sh/install | bash -s -- "bun-v${BUN_VERSION}"
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
+COPY package.json bun.lockb ./
+# Copy application code
+COPY . .
+
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
 # Install node modules
-COPY package.json bun.lockb ./
 RUN bun install --frozen-lockfile
-
-# Copy application code
-COPY . .
 
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
