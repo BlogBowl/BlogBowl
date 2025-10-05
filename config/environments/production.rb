@@ -1,4 +1,6 @@
 require "active_support/core_ext/integer/time"
+all_mailer_configs = Rails.application.config_for(:mailers)
+
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -27,7 +29,13 @@ Rails.application.configure do
   # config.asset_host = "http://assets.example.com"
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :production
+
+  s3_enabled = ENV.fetch('S3_ACCESS_KEY_ID', Rails.application.credentials.dig(Rails.env.to_sym, :s3, :access_key_id)).present?
+  if s3_enabled
+    config.active_storage.service = :s3
+  else
+    config.active_storage.service = :local
+  end
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
@@ -93,9 +101,15 @@ Rails.application.configure do
   Rails.application.routes.default_url_options[:host] = "app.blogbowl.io"
   config.asset_host = "https://app.blogbowl.io"
 
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = Rails.application.credentials[Rails.env.to_sym][:mail][:main]
+  smtp_enabled = ENV.fetch('SMTP_MAIL_ADDRESS', Rails.application.credentials.dig(Rails.env.to_sym, :smtp_mail, :address)).present?
+  if smtp_enabled
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = all_mailer_configs[:smtp][:smtp_settings]
+  else
+    config.action_mailer.delivery_method = :test
+  end
 
-  ActionMailer::Base.add_delivery_method :secondary_smtp, Mail::SMTP,
-                                         Rails.application.credentials[Rails.env.to_sym][:mail][:secondary]
+  # TODO: PRO
+  # ActionMailer::Base.add_delivery_method :secondary_smtp, Mail::SMTP,
+  #                                        Rails.application.credentials[Rails.env.to_sym][:mail][:secondary]
 end
