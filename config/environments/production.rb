@@ -92,7 +92,8 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [:id]
 
   config.hosts = nil
-  Rails.application.routes.default_url_options[:host] = fronted_url
+  frontend_host = ENV.fetch('FRONTEND_HOST', Rails.application.credentials.dig(Rails.env.to_sym, :frontend_url))
+  Rails.application.routes.default_url_options = { host: frontend_host }
   config.asset_host = fronted_url
 
   smtp_enabled = ENV.fetch('SMTP_MAIL_ADDRESS', Rails.application.credentials.dig(Rails.env.to_sym, :smtp_mail, :address)).present?
