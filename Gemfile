@@ -76,3 +76,5 @@ gem "hotwire-livereload", "~> 1.4.1", :group => :development
 gem 'sidekiq'
 
 gem 'truemail'
+
+gem 'postmark'
