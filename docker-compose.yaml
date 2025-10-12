@@ -1,0 +1,72 @@
+services:
+  blogbowl_app:
+    container_name: blogbowl_app
+    image: blogbowl/blogbowl:latest
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - blogbowl_public:/rails/public
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  blogbowl_sidekiq:
+    container_name: blogbowl_sidekiq
+    command: [ "bundle", "exec", "sidekiq" ]
+    image: blogbowl/blogbowl:latest
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: blogbowl
+      POSTGRES_USER: blogbowl
+      # Do not forget to generate a new password for production environment
+      POSTGRES_PASSWORD: blogbowl
+    volumes:
+      - bb_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 128M
+
+  redis:
+    image: redis:latest
+    command: redis-server --appendonly yes
+    volumes:
+      - blogbowl_redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 128M
+
+volumes:
+  bb_postgres_data:
+  blogbowl_redis_data:
+  blogbowl_public:
