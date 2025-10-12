@@ -409,6 +409,7 @@ DEPENDENCIES
   letter_opener (~> 1.10)
   pagy (~> 9.3)
   pg
+  postmark
   propshaft
   puma (>= 5.0)
   rack-cors (~> 3.0)
