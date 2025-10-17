@@ -1,13 +1,13 @@
 services:
   blogbowl_app:
     container_name: blogbowl_app
-    image: blogbowl/blogbowl:latest
+    image: blogbowl-open-source-alex:latest
     env_file:
       - .env
     ports:
       - "3000:3000"
     volumes:
-      - blogbowl_public:/rails/public
+      - blogbowl_storage:/rails/storage
     environment:
       - NODE_ENV=production
       - RAILS_ENV=production
@@ -69,4 +69,4 @@ services:
 volumes:
   bb_postgres_data:
   blogbowl_redis_data:
-  blogbowl_public:
+  blogbowl_storage:

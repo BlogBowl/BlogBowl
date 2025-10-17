@@ -18,7 +18,7 @@ Rails.application.configure do
   config.action_controller.perform_caching = true
 
   # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
-  config.public_file_server.enabled = false
+  config.public_file_server.enabled = true
 
   # Do not fall back to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
@@ -38,10 +38,10 @@ Rails.application.configure do
   end
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  config.assume_ssl = true
+  config.assume_ssl = false
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  # config.force_ssl = true
   config.ssl_options = { redirect: { exclude: -> request {
     request.path == "/api/internal/domain/verify" ||
       request.path == "/api/internal/analytics/user" } } }
@@ -92,9 +92,8 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [:id]
 
   config.hosts = nil
-  frontend_host = ENV.fetch('FRONTEND_HOST', Rails.application.credentials.dig(Rails.env.to_sym, :frontend_url))
-  Rails.application.routes.default_url_options = { host: frontend_host }
-  config.asset_host = fronted_url
+  Rails.application.routes.default_url_options = { host: "#{URI.parse(fronted_url).host}" }
+  config.action_controller.asset_host = fronted_url
 
   smtp_enabled = ENV.fetch('SMTP_MAIL_ADDRESS', Rails.application.credentials.dig(Rails.env.to_sym, :smtp_mail, :address)).present?
   if smtp_enabled
