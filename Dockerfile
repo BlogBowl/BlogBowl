@@ -51,8 +51,12 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
+# Add .npmrc secret
+RUN --mount=type=secret,id=npmrc \
+    cat /run/secrets/npmrc > .npmrc
+
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN SECRET_KEY_BASE_DUMMY=1 FRONTEND_URL=${FRONTEND_URL} ./bin/rails assets:precompile
+RUN SECRET_KEY_BASE_DUMMY=1 FRONTEND_URL=${FRONTEND_URL} ./bin/rails assets:precompile && rm .npmrc
 
 # Final stage for app image
 FROM base

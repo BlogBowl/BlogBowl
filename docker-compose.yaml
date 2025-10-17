@@ -1,7 +1,7 @@
 services:
   blogbowl_app:
     container_name: blogbowl_app
-    image: blogbowl-open-source-alex:latest
+    image: blogbowl/blogbowl
     env_file:
       - .env
     ports:
