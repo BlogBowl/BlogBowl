@@ -54,7 +54,7 @@ jobs:
 
       # Step 4: Build the Docker image and push it to the Docker Hub registry.
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           args: |
