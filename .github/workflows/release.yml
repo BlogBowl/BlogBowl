@@ -57,6 +57,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          args: |
+            FRONTEND_URL=http://localhost:3000
           push: true
           # The tags generated in the previous step are used here.
           tags: ${{ steps.meta.outputs.tags }}
