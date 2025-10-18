@@ -19,14 +19,77 @@
 ## 🚀 What is BlogBowl?
 BlogBowl is an open-source, self-hosted blogging platform designed for **blogs, product changelogs, and help documentation**.
 
-- Launch blogs, changelogs, and help centers **in minutes**.
-- Templates are **SEO optimized and lightning-fast**.
-- Focus on content - BlogBowl handles the technical setup, layouts, and newsletter management.
+- 🕐 Launch a full-featured blog or help center **in minutes**
+- ⚡ Prebuilt templates that are **SEO-optimized and lightning fast**
+- ✍️ Write with a clean, **Notion-like editor**
+- 💌 Built-in newsletter support with **Postmark** integration
+- 🌍 Bring your own **custom domain** or use reverse proxy for subfolder setup
+- 👥 Collect subscribers
+- 📩 Manage and send newsletters
 
 ![Alt Text for your GIF](https://blogbowl-gen.sfo3.cdn.digitaloceanspaces.com/other/blogbowl-demo.gif)
 
-[📺 Watch the full 5-minute demo video](https://www.blogbowl.io/blog-hosting#demo)
+### [📺 Watch the full 5-minute demo video](https://www.blogbowl.io/blog-hosting#demo)
+
+---
 
 ## 🛠 Getting started:
+
+### 🐳 Installing with Docker
+1. Create .env file and paste content from `.env.example`.
+2. Adjust the values in `.env` to your setup.
+3. To start BlogBowl with postgres and redis run:
+    ```bash
+    docker compose up -d
+    ```
+4. Open your browser and visit:
+    ```
+    http://localhost:3000
+   ```
+---
+
+### 🔐 Default Credentials
+
+When the server starts for the first time, the database is automatically seeded with a default admin user.
+
+| Field       | Value               |
+|--------------|---------------------|
+| **Email**    | `admin@example.com` |
+| **Password** | `changeme`          |
+
+👉 After your first login, make sure to **update the default credentials** for security.
+
+---
+
+## 💌 Sending Newsletters
+Newsletter support is optional - you can enable it if you want to send updates to your readers.
+
+BlogBowl uses [Postmark](https://postmarkapp.com/) for email delivery.
+Postmark offers up to 100 free emails per month, perfect for testing.
+
+To enable it:
+1. Create a free Postmark account.
+2. Set these environment variables in your .env:
+   ```
+    POSTMARK_ACCOUNT_TOKEN=your-postmark-account-token
+    POSTMARK_X_API_KEY=your-random-webhook-secret
+    ```
+---
+
+## 🧩 Tech Stack
+- Ruby on Rails
+- PostgreSQL (database)
+- Redis (cache)
+- Sidekiq - background jobs
+- Postmark (email delivery)
+
+---
+
+## 📄 License
+
+BlogBowl is open-source under the [MIT License](https://github.com/BlogBowl/BlogBowl/blob/main/LICENSE).
+
+---
+<p align="center">Built with ❤️ by creators, for creators.</p> 
 
 
