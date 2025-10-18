@@ -46,7 +46,6 @@ BlogBowl is an open-source, self-hosted blogging platform designed for **blogs, 
     ```
     http://localhost:3000
    ```
----
 
 ### 🔐 Default Credentials
 
@@ -74,7 +73,6 @@ To enable it:
     POSTMARK_ACCOUNT_TOKEN=your-postmark-account-token
     POSTMARK_X_API_KEY=your-random-webhook-secret
     ```
----
 
 ## 🧩 Tech Stack
 - Ruby on Rails
