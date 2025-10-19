@@ -58,6 +58,19 @@ jobs:
     # This job will only run if the scan and lint jobs succeed
     needs: [scan_ruby, lint]
 
+    env:
+      RAILS_ENV: test
+      DB_USERNAME: test
+      DB_PASSWORD: test
+      DB_HOST: localhost
+      DB_PORT: 5434
+      REDIS_URL: redis://localhost:6381/0
+      FRONTEND_URL: http://localhost:3000
+      PAGES_BASE_DOMAIN: example.com
+      SECRET_KEY_BASE: replace_with_lengthy_secure_hex
+      POSTMARK_X_API_KEY: test
+
+
     # This sets up a PostgreSQL database service for the job to use
     services:
       postgres:
@@ -113,45 +126,13 @@ jobs:
           bundle install
 
       - name: Set up test database
-        env:
-          RAILS_ENV: test
-          PGHOST: localhost
-          PGUSER: test
-          PGPASSWORD: test
         run: bin/rails db:setup
 
       - name: Precompile assets
-        env:
-          RAILS_ENV: test
-          FRONTEND_URL: http://localhost:3000
-          SECRET_KEY_BASE: replace_with_lengthy_secure_hex
         run: bin/rails assets:precompile
 
       - name: Run Host Application Tests
-        env:
-          RAILS_ENV: test
-          DB_USERNAME: test
-          DB_PASSWORD: test
-          DB_HOST: localhost
-          DB_PORT: 5434
-          REDIS_URL: redis://localhost:6381/0
-          FRONTEND_URL: http://localhost:3000
-          PAGES_BASE_DOMAIN: example.com
-          SECRET_KEY_BASE: replace_with_lengthy_secure_hex
-          POSTMARK_X_API_KEY: test
-
         run: bin/rails test
 
       - name: Run Core Engine Tests
-        env:
-          RAILS_ENV: test
-          DB_USERNAME: test
-          DB_PASSWORD: test
-          DB_HOST: localhost
-          DB_PORT: 5434
-          REDIS_URL: redis://localhost:6381/0
-          FRONTEND_URL: http://localhost:3000
-          PAGES_BASE_DOMAIN: example.com
-          SECRET_KEY_BASE: replace_with_lengthy_secure_hex
-          POSTMARK_X_API_KEY: test
         run: bin/rake test:core_engine
