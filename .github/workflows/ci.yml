@@ -1,11 +1,18 @@
+# This is a GitHub Actions workflow file.
+# It defines a set of automated jobs to run when code is pushed or a pull request is created.
+# Place this file in your project at: .github/workflows/ci.yml
+
 name: CI
 
 on:
+  # Run on all pull requests
   pull_request:
+  # Run on pushes to the main branch
   push:
     branches: [ main ]
 
 jobs:
+  # This job scans for security vulnerabilities
   scan_ruby:
     runs-on: ubuntu-latest
 
@@ -17,11 +24,12 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
-          bundler-cache: true
+          bundler-cache: true # Caches gems for faster builds
 
-      - name: Scan for common Rails security vulnerabilities using static analysis
+      - name: Scan for common Rails security vulnerabilities
         run: bin/brakeman --no-pager
 
+  # This job checks for code style consistency
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -37,3 +45,72 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
+  # This job runs all your tests
+  test:
+    runs-on: ubuntu-latest
+    # This job will only run if the scan and lint jobs succeed
+    needs: [scan_ruby, lint]
+
+    # This sets up a PostgreSQL database service for the job to use
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test # A name for the test database
+        ports:
+          - 5434:5432
+        # Health check to ensure postgres is ready before steps run
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:6-alpine
+        ports:
+          - 6381:6379
+        # Health check to ensure redis is ready before steps run
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code (including submodules)
+        uses: actions/checkout@v4
+        with:
+          # IMPORTANT: This fetches your 'core' engine submodule code
+          submodules: true
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Set up test database
+        env:
+          RAILS_ENV: test
+          PGHOST: localhost
+          PGUSER: test
+          PGPASSWORD: test
+        run: bin/rails db:setup
+
+      - name: Run Host Application Tests
+        env:
+          RAILS_ENV: test
+          PGHOST: localhost
+          PGUSER: test
+          PGPASSWORD: test
+        run: bin/rails test
+
+      - name: Run Core Engine Tests
+        env:
+          RAILS_ENV: test
+          PGHOST: localhost
+          PGUSER: test
+          PGPASSWORD: test
+        run: bin/rake test:core_engine
