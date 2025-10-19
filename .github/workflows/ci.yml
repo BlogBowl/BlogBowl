@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # This is required for bundle install to find the local 'core' gem
           submodules: true
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # This is required for bundle install to find the local 'core' gem
           submodules: true
@@ -87,7 +87,7 @@ jobs:
 
     steps:
       - name: Checkout code (including submodules)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # IMPORTANT: This fetches your 'core' engine submodule code
           submodules: true
@@ -95,13 +95,19 @@ jobs:
       - name: Install Base Packages
         run: |
           sudo apt-get update -qq && 
-          sudo apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client libvips
+          sudo apt-get install --no-install-recommends -y curl nodejs libjemalloc2 libvips postgresql-client libvips
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+
+      - name: Install Packages
+        run: |
+          npm install -g bun &&
+          bun install &&
+          bundle install
 
       - name: Set up test database
         env:
