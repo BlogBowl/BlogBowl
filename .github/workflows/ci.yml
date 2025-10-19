@@ -104,7 +104,6 @@ jobs:
           bundler-cache: true
 
       - name: Create .npmrc file
-        if: secrets.NPMRC_FILE
         run: echo "${{ secrets.NPMRC_FILE }}" > .npmrc
 
       - name: Install Packages
