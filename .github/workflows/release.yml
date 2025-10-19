@@ -8,10 +8,18 @@ on:
     types: [created]
   workflow_dispatch:
 
-env:
-  DOCKER_IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/blogbowl
-
 jobs:
+  # --------------------------------------------------
+  # JOB: Run scan, lint and tests by calling the CI workflow
+  # --------------------------------------------------
+  run-ci-checks:
+    name: Run CI Checks (Scan, Lint, Test)
+    # This 'uses' keyword calls our other workflow file, making it reusable.
+    uses: ./.github/workflows/ci.yml
+    # This passes necessary secrets (like NPMRC_FILE) to the reusable workflow.
+    secrets: inherit
+
+
   # --------------------------------------------------
   # JOB: Build the Docker image and push it to Docker Hub
   # --------------------------------------------------
@@ -19,6 +27,9 @@ jobs:
     name: Build and Push Docker Image
     # Runs on the latest version of Ubuntu provided by GitHub.
     runs-on: ubuntu-latest
+
+    env:
+      DOCKER_IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/blogbowl
 
     steps:
       # Step 1: Check out the repository's code at the specific tag of the release.

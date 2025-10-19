@@ -1,15 +1,13 @@
-# This is a GitHub Actions workflow file.
-# It defines a set of automated jobs to run when code is pushed or a pull request is created.
-# Place this file in your project at: .github/workflows/ci.yml
-
 name: CI
 
 on:
   # Run on all pull requests
-  pull_request:
   # Run on pushes to the main branch
+  pull_request:
   push:
     branches: [ main ]
+  # This makes the workflow reusable by other workflows
+  workflow_call:
 
 jobs:
   # This job scans for security vulnerabilities
@@ -126,7 +124,7 @@ jobs:
           bundle install
 
       - name: Set up test database
-        run: bin/rails db:setup
+        run: bin/rails db:prepare
 
       - name: Precompile assets
         run: bin/rails assets:precompile
