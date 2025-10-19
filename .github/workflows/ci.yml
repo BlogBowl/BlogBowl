@@ -30,7 +30,7 @@ jobs:
           bundler-cache: true # Caches gems for faster builds
 
       - name: Scan for common Rails security vulnerabilities
-        run: bin/brakeman --no-pager --no-exit-on-warn
+        run: bin/brakeman --no-pager
 
   # This job checks for code style consistency
   lint:
@@ -91,6 +91,11 @@ jobs:
         with:
           # IMPORTANT: This fetches your 'core' engine submodule code
           submodules: true
+
+      - name: Install Base Packages
+        run: |
+          sudo apt-get update -qq && 
+          sudo apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client libvips
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
