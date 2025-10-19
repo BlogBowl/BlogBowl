@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/BlogBowl/BlogBowl/master/LICENSE">
+  <a href="https://github.com/BlogBowl/BlogBowl/main/LICENSE">
     <img src="https://img.shields.io/github/license/BlogBowl/BlogBowl.svg" alt="MIT License" />
   </a>
 </p>
