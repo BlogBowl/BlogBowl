@@ -103,6 +103,10 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Create .npmrc file
+        if: secrets.NPMRC_FILE
+        run: echo "${{ secrets.NPMRC_FILE }}" > .npmrc
+
       - name: Install Packages
         run: |
           npm install -g bun &&
