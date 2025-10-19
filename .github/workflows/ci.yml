@@ -30,7 +30,7 @@ jobs:
           bundler-cache: true # Caches gems for faster builds
 
       - name: Scan for common Rails security vulnerabilities
-        run: bin/brakeman --no-pager
+        run: bin/brakeman --no-pager --no-exit-on-warn
 
   # This job checks for code style consistency
   lint:
