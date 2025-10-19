@@ -120,6 +120,13 @@ jobs:
           PGPASSWORD: test
         run: bin/rails db:setup
 
+      - name: Precompile assets
+        env:
+          RAILS_ENV: test
+          FRONTEND_URL: http://localhost:3000
+          SECRET_KEY_BASE: replace_with_lengthy_secure_hex
+        run: bin/rails assets:precompile
+
       - name: Run Host Application Tests
         env:
           RAILS_ENV: test
@@ -130,6 +137,7 @@ jobs:
           REDIS_URL: redis://localhost:6381/0
           FRONTEND_URL: http://localhost:3000
           PAGES_BASE_DOMAIN: example.com
+          SECRET_KEY_BASE: replace_with_lengthy_secure_hex
 
         run: bin/rails test
 
@@ -143,4 +151,5 @@ jobs:
           REDIS_URL: redis://localhost:6381/0
           FRONTEND_URL: http://localhost:3000
           PAGES_BASE_DOMAIN: example.com
+          SECRET_KEY_BASE: replace_with_lengthy_secure_hex
         run: bin/rake test:core_engine
