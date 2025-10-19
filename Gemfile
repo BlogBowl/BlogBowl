@@ -73,3 +73,5 @@ gem 'sidekiq'
 gem 'truemail'
 
 gem 'postmark'
+
+gem 'non-stupid-digest-assets'
