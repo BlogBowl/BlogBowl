@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # This is required for bundle install to find the local 'core' gem
+          submodules: true
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -35,6 +38,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # This is required for bundle install to find the local 'core' gem
+          submodules: true
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
