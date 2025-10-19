@@ -27,6 +27,7 @@ jobs:
     name: Build and Push Docker Image
     # Runs on the latest version of Ubuntu provided by GitHub.
     runs-on: ubuntu-latest
+    needs: run-ci-checks
 
     env:
       DOCKER_IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/blogbowl
