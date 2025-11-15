@@ -63,7 +63,7 @@ When the server starts for the first time, the database is automatically seeded 
 ## 💌 Sending Newsletters
 Newsletter support is optional - you can enable it if you want to send updates to your readers.
 
-BlogBowl uses [Postmark](https://postmarkapp.com/) for email delivery.
+BlogBowl uses [Postmark](https://www.postmarkapp.com/?via=db92a4) for email delivery.
 Postmark offers up to 100 free emails per month, perfect for testing.
 
 To enable it:
@@ -73,7 +73,7 @@ To enable it:
     POSTMARK_ACCOUNT_TOKEN=your-postmark-account-token
     POSTMARK_X_API_KEY=your-random-webhook-secret
     ```
-
+> Pro tip: If you want to **support BlogBowl**, register on PostmarkApp using our [referral link](https://www.postmarkapp.com/?via=db92a4).
 ## 🧩 Tech Stack
 - Ruby on Rails
 - PostgreSQL (database)
