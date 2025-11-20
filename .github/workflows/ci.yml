@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           # This is required for bundle install to find the local 'core' gem
           submodules: true
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           # This is required for bundle install to find the local 'core' gem
           submodules: true
@@ -101,7 +101,7 @@ jobs:
 
     steps:
       - name: Checkout code (including submodules)
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           # IMPORTANT: This fetches your 'core' engine submodule code
           submodules: true
