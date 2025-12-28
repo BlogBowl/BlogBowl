@@ -35,7 +35,7 @@ BlogBowl is an open-source, self-hosted blogging platform designed for **blogs, 
 
 ## 🛠 Getting started:
 
-### 🐳 Installing with Docker
+### 🐳 Installing with Docker (Production)
 1. Create .env file and paste content from `.env.example`.
 2. Adjust the values in `.env` to your setup.
 3. To start BlogBowl with postgres and redis run:
@@ -45,7 +45,49 @@ BlogBowl is an open-source, self-hosted blogging platform designed for **blogs, 
 4. Open your browser and visit:
     ```
     http://localhost:3000
-   ```
+    ```
+
+### 💻 Local Development Setup
+
+**Prerequisites:** Ruby 3.2.2, Bun, Docker
+
+1. Clone with submodules:
+    ```bash
+    git clone --recurse-submodules https://github.com/BlogBowl/BlogBowl.git
+    cd BlogBowl
+    ```
+
+2. Create `.env` file from example and set the database URL:
+    ```bash
+    cp .env.example .env
+    ```
+    Update `DATABASE_URL` in `.env`:
+    ```
+    DATABASE_URL=postgresql://development:development@localhost:5435/blogbowl
+    ```
+
+3. Add hostname to `/etc/hosts`:
+    ```bash
+    echo "127.0.0.1 blogbowl.test" | sudo tee -a /etc/hosts
+    ```
+
+4. Start infrastructure and install dependencies:
+    ```bash
+    docker compose -f docker-compose.dev.yaml up -d
+    bundle install
+    bun install
+    ```
+
+5. Setup database and start the server:
+    ```bash
+    RAILS_ENV=development bin/rails db:migrate db:seed
+    bin/dev
+    ```
+
+6. Open your browser and visit:
+    ```
+    http://blogbowl.test:3000/sign_in
+    ```
 
 ### 🔐 Default Credentials
 
