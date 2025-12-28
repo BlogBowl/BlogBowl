@@ -80,9 +80,9 @@ Rails.application.configure do
 
   config.hosts = nil
   Rails.application.routes.default_url_options[:host] = "blogbowl.test"
-  config.asset_host = "https://blogbowl.test"
+  config.asset_host = nil
 
-  config.force_ssl = true
+  config.force_ssl = false
   config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/api/internal/domain/verify" ||
     request.path == "/api/internal/analytics/user" } } }
 end
