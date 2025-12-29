@@ -75,3 +75,5 @@ gem 'truemail'
 gem 'postmark'
 
 gem 'non-stupid-digest-assets'
+
+gem 'babosa'

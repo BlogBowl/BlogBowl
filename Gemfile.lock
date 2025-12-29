@@ -109,6 +109,7 @@ GEM
       actionpack (>= 5.0)
       activesupport (>= 5.0)
     ast (2.4.3)
+    babosa (2.0.0)
     base64 (0.2.0)
     bcrypt (3.1.20)
     benchmark (0.4.0)
@@ -385,6 +386,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_storage_validations (~> 2.0)
+  babosa
   bootsnap
   brakeman
   cancancan (~> 3.6)
