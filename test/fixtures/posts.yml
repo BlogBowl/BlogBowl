@@ -17,3 +17,18 @@ post_with_authors:
   content_html: MyText
   page: one
   slug: post-with-authors
+
+default_user_post_1:
+  title: First Post
+  content_html: <p>First post content</p>
+  page: default_user_page_1
+  slug: first-post
+  status: draft
+
+default_user_post_2:
+  title: Second Post
+  content_html: <p>Second post content</p>
+  page: default_user_page_1
+  slug: second-post
+  status: published
+  first_published_at: <%= 1.day.ago.to_fs(:db) %>
