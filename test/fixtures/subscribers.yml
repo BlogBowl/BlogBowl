@@ -41,3 +41,17 @@ verified_2:
   active: true
   verified: true
   newsletter: newsletter_with_subscribers
+
+default_user_subscriber_1:
+  email: subscriber1@example.com
+  status: 'active'
+  active: true
+  verified: true
+  newsletter: default_user_newsletter_1
+
+default_user_subscriber_2:
+  email: subscriber2@example.com
+  status: 'pending'
+  active: false
+  verified: false
+  newsletter: default_user_newsletter_1
