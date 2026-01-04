@@ -2,7 +2,7 @@
 
 **Date:** January 4, 2026
 **Branch:** `feat/api-v1`
-**Status:** In Progress (Pages, Categories completed)
+**Status:** In Progress (Pages, Categories, Posts, Cover Image completed)
 
 ---
 
@@ -134,9 +134,65 @@
 
 ---
 
-## 3. Technical Decisions
+## 3. Completed: Posts API
 
-### 3.1 JSON Key Format: `snake_case`
+### 3.1 Files Created/Modified
+
+| File | Action | Description |
+|------|--------|-------------|
+| `submodules/core/config/routes.rb` | Modified | Added posts routes with publish and cover_image |
+| `submodules/core/app/controllers/api/v1/posts_controller.rb` | Modified | Updated to snake_case JSON |
+| `submodules/core/app/controllers/api/v1/images_controller.rb` | Modified | Changed to handle cover_image (singular) |
+| `submodules/core/app/models/concerns/models/post_concern.rb` | Modified | Added 'scheduled' status, removed dead page_topic |
+| `submodules/core/app/jobs/publish_post_job.rb` | Created | Job for scheduled post publishing |
+| `test/controllers/api/v1/posts_controller_test.rb` | Created | Complete test coverage (22 tests) |
+| `test/fixtures/posts.yml` | Modified | Added fixtures for default_user_workspace |
+| `test/fixtures/authors.yml` | Modified | Added default_user_author fixture |
+| `test/fixtures/post_authors.yml` | Modified | Added post-author association |
+
+### 3.2 Posts API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/pages/:page_id/posts` | List posts (paginated, filterable) |
+| GET | `/api/v1/pages/:page_id/posts/:id` | Get single post |
+| POST | `/api/v1/pages/:page_id/posts` | Create post |
+| PATCH | `/api/v1/pages/:page_id/posts/:id` | Update post |
+| DELETE | `/api/v1/pages/:page_id/posts/:id` | Delete post |
+| POST | `/api/v1/pages/:page_id/posts/:id/publish` | Publish or schedule post |
+
+**Filters for index:**
+- `status` - Filter by status (draft, published, scheduled)
+- `category_id` - Filter by category
+
+**Publish endpoint:**
+- Without `scheduled_at`: Publishes immediately
+- With `scheduled_at` (ISO 8601 future date): Schedules for later
+
+### 3.3 Cover Image API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/pages/:page_id/posts/:post_id/cover_image` | Get cover image |
+| POST | `/api/v1/pages/:page_id/posts/:post_id/cover_image` | Set cover image |
+| PUT | `/api/v1/pages/:page_id/posts/:post_id/cover_image` | Replace cover image |
+| DELETE | `/api/v1/pages/:page_id/posts/:post_id/cover_image` | Remove cover image |
+
+### 3.4 Bug Fixes
+
+1. **Dead `page_topic` association** - Removed from Post model (referenced non-existent model)
+2. **Missing `scheduled` status** - Added to Post enum (draft: 0, published: 1, scheduled: 2)
+3. **Missing `PublishPostJob`** - Created job for scheduled publishing
+
+### 3.5 Known Issues
+
+- **TODO:** Check why cover image doesn't show on frontend
+
+---
+
+## 4. Technical Decisions
+
+### 4.1 JSON Key Format: `snake_case`
 
 **Decision:** Use `snake_case` for all JSON keys.
 
@@ -291,10 +347,14 @@ test/
 │       └── v1/
 │           ├── base_controller_test.rb (existing)
 │           ├── pages_controller_test.rb (13 tests)
-│           └── categories_controller_test.rb (16 tests)
+│           ├── categories_controller_test.rb (16 tests)
+│           └── posts_controller_test.rb (22 tests)
 └── fixtures/
     ├── pages.yml (updated)
-    └── categories.yml (updated)
+    ├── categories.yml (updated)
+    ├── posts.yml (updated)
+    ├── authors.yml (updated)
+    └── post_authors.yml (updated)
 ```
 
 ---
@@ -318,14 +378,14 @@ test/
 
 ---
 
-## 7. Controllers Status
+## 8. Controllers Status
 
 | Controller | Status | Tests | Notes |
 |------------|--------|-------|-------|
 | PagesController | ✅ Complete | 13 tests | Workspace-level CRUD |
 | CategoriesController | ✅ Complete | 16 tests | Nested under pages |
-| PostsController | ⏳ Pending | - | CRUD + publish under pages |
-| ImagesController | ⏳ Pending | - | Upload/delete under posts |
+| PostsController | ✅ Complete | 22 tests | CRUD + publish + schedule |
+| ImagesController | ✅ Complete | - | Cover image (GET, POST, PUT, DELETE) |
 | RevisionsController | ⏳ Pending | - | List, create, show_last, update_last, apply_last, share_last |
 | NewslettersController | ⏳ Pending | - | CRUD at workspace level |
 | SubscribersController | ⏳ Pending | - | List, create (upsert), delete under newsletters |
@@ -334,7 +394,7 @@ test/
 
 ---
 
-## 8. Next Steps
+## 9. Next Steps
 
 1. **Update remaining controllers** to use `snake_case` JSON keys
 2. **Configure routes** for new controllers
