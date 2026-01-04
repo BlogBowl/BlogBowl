@@ -50,6 +50,42 @@ RAILS_ENV=development bin/rails db:seed
 - **`submodules/core`**: Rails engine containing all models, controllers, views, jobs, mailers, and abilities. Mounted as a gem via Gemfile.
 - **`submodules/editor`**: React/TypeScript rich text editor built with TipTap Pro and Vite.
 
+### Core Engine Structure (`submodules/core`)
+```
+submodules/core/
+├── app/
+│   ├── abilities/           # CanCanCan authorization
+│   ├── constraints/         # Route constraints (PublicRouteConstraint)
+│   ├── controllers/
+│   │   ├── api/v1/          # Public REST API (token-authenticated)
+│   │   │   ├── concerns/    # Shared API concerns (APIResponse)
+│   │   │   ├── base_controller.rb
+│   │   │   ├── pages_controller.rb
+│   │   │   ├── posts_controller.rb
+│   │   │   ├── categories_controller.rb
+│   │   │   └── ...
+│   │   ├── admin/           # Admin panel controllers
+│   │   └── public/          # Public blog controllers
+│   ├── jobs/                # Sidekiq background jobs
+│   ├── mailers/             # Email templates
+│   ├── models/              # All ActiveRecord models
+│   └── views/               # ERB templates
+├── config/
+│   └── routes.rb            # Engine routes (merged with main app)
+├── lib/
+│   └── core/
+│       └── engine.rb        # Engine configuration
+└── spec/ or test/           # Engine-specific tests
+```
+
+### API v1 Architecture
+The public API uses Bearer token authentication via `APIToken` model:
+- **Base controller**: `API::V1::BaseController` authenticates requests and sets `@current_workspace`
+- **Concerns**: Located in `api/v1/concerns/` and loaded via `require_relative` (Zeitwerk doesn't autoload custom paths)
+- **Response format**: Collections use pagination envelope `{page, size, total, result}`, single resources are unwrapped
+- **JSON keys**: `snake_case` for consistency with Rails conventions
+- **Documentation**: Apipie DSL in controllers generates API docs
+
 ### Multi-Tenant Routing
 Routes are constrained by hostname:
 - **Admin routes** (`blogbowl.test` in dev): Sign in, workspace management, post editing
