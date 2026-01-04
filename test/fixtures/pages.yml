@@ -25,3 +25,17 @@ blog_with_subscribers:
   slug: 'blog'
   name_slug: 'blog'
   domain: blog.subscribers.io
+
+default_user_page_1:
+  workspace: default_user_workspace
+  name: 'Test Page 1'
+  slug: 'test-page-1'
+  name_slug: 'test-page-1'
+  domain: test-page-1.blogbowl.test
+
+default_user_page_2:
+  workspace: default_user_workspace
+  name: 'Test Page 2'
+  slug: 'test-page-2'
+  name_slug: 'test-page-2'
+  domain: test-page-2.blogbowl.test
