@@ -2,7 +2,7 @@
 
 **Date:** January 4, 2026
 **Branch:** `feat/api-v1`
-**Status:** In Progress (Pages completed)
+**Status:** In Progress (Pages, Categories completed)
 
 ---
 
@@ -75,9 +75,68 @@
 
 ---
 
-## 2. Technical Decisions
+## 2. Completed: Categories API
 
-### 2.1 JSON Key Format: `snake_case`
+### 2.1 Files Created/Modified
+
+| File | Action | Description |
+|------|--------|-------------|
+| `submodules/core/config/routes.rb` | Modified | Added nested categories routes under pages |
+| `submodules/core/app/models/concerns/models/category_concern.rb` | Modified | Removed dead `page_topics` association |
+| `test/controllers/api/v1/categories_controller_test.rb` | Created | Complete test coverage (16 tests) |
+| `test/fixtures/categories.yml` | Modified | Added fixtures for default_user_workspace |
+
+### 2.2 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/pages/:page_id/categories` | List categories (paginated) |
+| GET | `/api/v1/pages/:page_id/categories/:id` | Get single category |
+| POST | `/api/v1/pages/:page_id/categories` | Create category |
+| PATCH | `/api/v1/pages/:page_id/categories/:id` | Update category |
+| DELETE | `/api/v1/pages/:page_id/categories/:id` | Delete category |
+
+### 2.3 Request/Response Format
+
+**Create/Update params:**
+```json
+{
+  "category": {
+    "name": "Tech",
+    "slug": "tech",
+    "description": "Technology articles",
+    "color": "#FF5733",
+    "parent_id": null
+  }
+}
+```
+
+**Response fields:**
+```json
+{
+  "id": 1,
+  "name": "Tech",
+  "slug": "tech",
+  "description": "Technology articles",
+  "color": "#FF5733",
+  "parent_id": null,
+  "page_id": 1,
+  "created_at": "2026-01-04T...",
+  "updated_at": "2026-01-04T..."
+}
+```
+
+### 2.4 Bug Fix
+
+**Problem:** Category model had `has_many :page_topics` association referencing non-existent model and table.
+
+**Solution:** Removed dead association line from `category_concern.rb`.
+
+---
+
+## 3. Technical Decisions
+
+### 3.1 JSON Key Format: `snake_case`
 
 **Decision:** Use `snake_case` for all JSON keys.
 
@@ -88,7 +147,7 @@
 
 **Alternative Considered:** `camelCase` (common for JS frontends) - rejected for consistency.
 
-### 2.2 Pagination: Pagy gem
+### 3.2 Pagination: Pagy gem
 
 **Decision:** Use Pagy gem for pagination (already in project).
 
@@ -101,7 +160,7 @@ pagy, records = pagy(scope, limit: limit, page: params[:page])
 - `page` - Page number (default: 1)
 - `size` - Items per page (default: 10, max: 100)
 
-### 2.3 Response Envelope Strategy
+### 3.3 Response Envelope Strategy
 
 **Decision:** Envelope for collections only, single resources unwrapped.
 
@@ -112,9 +171,9 @@ pagy, records = pagy(scope, limit: limit, page: params[:page])
 
 ---
 
-## 3. Implementation Challenges & Solutions
+## 4. Implementation Challenges & Solutions
 
-### 3.1 Concern Autoloading Issue
+### 4.1 Concern Autoloading Issue
 
 **Problem:** `API::V1::APIResponse` concern not being autoloaded by Zeitwerk.
 
@@ -143,7 +202,7 @@ module API
 end
 ```
 
-### 3.2 Module Naming with API Acronym
+### 4.2 Module Naming with API Acronym
 
 **Problem:** Zeitwerk inflection for "API" caused constant name mismatch.
 
@@ -154,13 +213,13 @@ end
 
 **Solution:** Name the module `API::V1::APIResponse` (uppercase API and Response).
 
-### 3.3 File Permissions
+### 4.3 File Permissions
 
 **Problem:** Concern file had restrictive permissions (600).
 
 **Solution:** `chmod 644` to make file readable.
 
-### 3.4 Test Fixtures - Page Domain Validation
+### 4.4 Test Fixtures - Page Domain Validation
 
 **Problem:** Tests failed with "Domain is invalid" when creating pages.
 
@@ -170,7 +229,7 @@ end
 1. Use fixtures with pre-set domains instead of creating pages in setup
 2. Set `ENV['PAGES_BASE_DOMAIN']` in test setup for create tests
 
-### 3.5 Test URL Generation - `to_param` Returns Slug
+### 4.5 Test URL Generation - `to_param` Returns Slug
 
 **Problem:** `api_v1_page_url(@page1)` generated URL with slug instead of ID.
 
@@ -185,7 +244,7 @@ get api_v1_page_url(@page1)  # => /api/v1/pages/my-slug
 get api_v1_page_url(id: @page1.id)  # => /api/v1/pages/123
 ```
 
-### 3.6 Test Database Setup
+### 4.6 Test Database Setup
 
 **Problem:** Test database on port 5434 not running.
 
@@ -194,7 +253,7 @@ get api_v1_page_url(id: @page1.id)  # => /api/v1/pages/123
 docker compose -f docker-compose.test.yaml up -d
 ```
 
-### 3.7 Migration Conflicts
+### 4.7 Migration Conflicts
 
 **Problem:** Duplicate migrations for `api_tokens` table.
 
@@ -204,7 +263,7 @@ docker compose -f docker-compose.test.yaml up -d
 
 ---
 
-## 4. File Structure
+## 5. File Structure
 
 ```
 submodules/core/
@@ -231,14 +290,16 @@ test/
 │   └── api/
 │       └── v1/
 │           ├── base_controller_test.rb (existing)
-│           └── pages_controller_test.rb (updated)
+│           ├── pages_controller_test.rb (13 tests)
+│           └── categories_controller_test.rb (16 tests)
 └── fixtures/
-    └── pages.yml (updated)
+    ├── pages.yml (updated)
+    └── categories.yml (updated)
 ```
 
 ---
 
-## 5. APIResponse Concern Details
+## 6. APIResponse Concern Details
 
 **Location:** `submodules/core/app/controllers/api/v1/concerns/api_response.rb`
 
@@ -257,27 +318,23 @@ test/
 
 ---
 
-## 6. Controllers Created (Pending Testing)
+## 7. Controllers Status
 
-The following controllers were created but need:
-1. Route configuration
-2. Test coverage
-3. Manual testing in Postman
+| Controller | Status | Tests | Notes |
+|------------|--------|-------|-------|
+| PagesController | ✅ Complete | 13 tests | Workspace-level CRUD |
+| CategoriesController | ✅ Complete | 16 tests | Nested under pages |
+| PostsController | ⏳ Pending | - | CRUD + publish under pages |
+| ImagesController | ⏳ Pending | - | Upload/delete under posts |
+| RevisionsController | ⏳ Pending | - | List, create, show_last, update_last, apply_last, share_last |
+| NewslettersController | ⏳ Pending | - | CRUD at workspace level |
+| SubscribersController | ⏳ Pending | - | List, create (upsert), delete under newsletters |
 
-| Controller | Endpoints |
-|------------|-----------|
-| CategoriesController | CRUD under pages |
-| PostsController | CRUD + publish under pages |
-| ImagesController | Upload/delete under posts |
-| RevisionsController | List, create, show_last, update_last, apply_last, share_last |
-| NewslettersController | CRUD at workspace level |
-| SubscribersController | List, create (upsert), delete under newsletters |
-
-**Note:** These controllers use `camelCase` JSON keys and need to be updated to `snake_case`.
+**Note:** All controllers have been updated to use `snake_case` JSON keys.
 
 ---
 
-## 7. Next Steps
+## 8. Next Steps
 
 1. **Update remaining controllers** to use `snake_case` JSON keys
 2. **Configure routes** for new controllers
@@ -286,7 +343,7 @@ The following controllers were created but need:
 
 ---
 
-## 8. Commands Reference
+## 9. Commands Reference
 
 ```bash
 # Start test database
