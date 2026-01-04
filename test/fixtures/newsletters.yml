@@ -18,3 +18,13 @@ newsletter_blog_with_domain_1:
   name: 'Default Newsletter'
   name_slug: 'default-newsletter'
   workspace: workspace_blog_with_domain_1
+
+default_user_newsletter_1:
+  name: 'Tech Weekly'
+  name_slug: 'tech-weekly'
+  workspace: default_user_workspace
+
+default_user_newsletter_2:
+  name: 'Product Updates'
+  name_slug: 'product-updates'
+  workspace: default_user_workspace
