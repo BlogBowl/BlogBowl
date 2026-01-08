@@ -63,7 +63,11 @@ submodules/core/
 │   │   │   ├── pages_controller.rb
 │   │   │   ├── posts_controller.rb
 │   │   │   ├── categories_controller.rb
-│   │   │   └── ...
+│   │   │   ├── revisions_controller.rb
+│   │   │   ├── images_controller.rb
+│   │   │   ├── newsletters_controller.rb
+│   │   │   ├── subscribers_controller.rb
+│   │   │   └── emails_controller.rb
 │   │   ├── admin/           # Admin panel controllers
 │   │   └── public/          # Public blog controllers
 │   ├── jobs/                # Sidekiq background jobs
@@ -85,6 +89,23 @@ The public API uses Bearer token authentication via `APIToken` model:
 - **Response format**: Collections use pagination envelope `{page, size, total, result}`, single resources are unwrapped
 - **JSON keys**: `snake_case` for consistency with Rails conventions
 - **Documentation**: Apipie DSL in controllers generates API docs
+
+**Available endpoints:**
+| Resource | Endpoints | Description |
+|----------|-----------|-------------|
+| Pages | `GET /api/v1/pages`, `GET /api/v1/pages/:id` | Blog/changelog/help center pages |
+| Posts | `GET /api/v1/pages/:page_id/posts`, `GET /api/v1/posts/:id` | Posts with filtering, search, pagination |
+| Posts | `POST/PATCH/DELETE /api/v1/posts/:id` | Create, update, delete posts |
+| Posts | `POST /api/v1/posts/:id/cover_image` | Upload cover image |
+| Revisions | `GET /api/v1/posts/:post_id/revisions` | Post revision history |
+| Categories | `GET /api/v1/pages/:page_id/categories` | Page categories |
+| Images | `POST /api/v1/images` | Upload images for posts |
+| Newsletters | `GET/POST /api/v1/pages/:page_id/newsletters` | Newsletter management |
+| Newsletters | `GET/PATCH/DELETE /api/v1/newsletters/:id` | Single newsletter operations |
+| Subscribers | `GET/POST /api/v1/pages/:page_id/subscribers` | Subscriber management |
+| Subscribers | `GET/PATCH/DELETE /api/v1/subscribers/:id` | Single subscriber operations |
+| Emails | `GET /api/v1/newsletters/:newsletter_id/emails` | Newsletter email history |
+| Emails | `GET /api/v1/emails/:id` | Single email details |
 
 ### Multi-Tenant Routing
 Routes are constrained by hostname:
