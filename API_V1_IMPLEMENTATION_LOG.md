@@ -1,8 +1,8 @@
 # BlogBowl API v1 Implementation Log
 
-**Date:** January 4, 2026
+**Date:** January 8, 2026
 **Branch:** `feat/api-v1`
-**Status:** In Progress (Pages, Categories, Posts, Cover Image completed)
+**Status:** In Progress (Pages, Categories, Posts, Cover Image, Newsletters, Subscribers, Emails completed - Revisions pending)
 
 ---
 
@@ -190,9 +190,207 @@
 
 ---
 
-## 4. Technical Decisions
+## 4. Completed: Newsletters API
 
-### 4.1 JSON Key Format: `snake_case`
+### 4.1 Files Created/Modified
+
+| File | Action | Description |
+|------|--------|-------------|
+| `submodules/core/config/routes.rb` | Modified | Added newsletters routes at workspace level |
+| `test/controllers/api/v1/newsletters_controller_test.rb` | Created | Complete test coverage (13 tests) |
+| `test/fixtures/newsletters.yml` | Modified | Added fixtures for default_user_workspace |
+
+### 4.2 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/newsletters` | List newsletters (paginated) |
+| GET | `/api/v1/newsletters/:id` | Get single newsletter |
+| POST | `/api/v1/newsletters` | Create newsletter |
+| PATCH | `/api/v1/newsletters/:id` | Update newsletter |
+
+### 4.3 Request/Response Format
+
+**Create/Update params:**
+```json
+{
+  "newsletter": {
+    "name": "Weekly Digest",
+    "description": "Weekly newsletter for subscribers"
+  }
+}
+```
+
+**Response fields:**
+```json
+{
+  "id": 1,
+  "name": "Weekly Digest",
+  "description": "Weekly newsletter for subscribers",
+  "slug": "weekly-digest",
+  "workspace_id": 1,
+  "created_at": "2026-01-08T...",
+  "updated_at": "2026-01-08T..."
+}
+```
+
+---
+
+## 5. Completed: Subscribers API
+
+### 5.1 Files Created/Modified
+
+| File | Action | Description |
+|------|--------|-------------|
+| `submodules/core/config/routes.rb` | Modified | Added subscribers routes nested under newsletters |
+| `submodules/core/app/controllers/api/v1/subscribers_controller.rb` | Modified | Added update endpoint for status management |
+| `test/controllers/api/v1/subscribers_controller_test.rb` | Created | Complete test coverage (12 tests) |
+| `test/fixtures/subscribers.yml` | Modified | Added fixtures for default_user_workspace |
+
+### 5.2 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/newsletters/:newsletter_id/subscribers` | List subscribers (paginated, filterable) |
+| POST | `/api/v1/newsletters/:newsletter_id/subscribers` | Create subscriber (upsert by email) |
+| PATCH | `/api/v1/newsletters/:newsletter_id/subscribers/:id` | Update subscriber status |
+| DELETE | `/api/v1/newsletters/:newsletter_id/subscribers/:id` | Remove subscriber |
+
+**Filters for index:**
+- `status` - Filter by status (pending, active)
+- `verified` - Filter by verification status (true/false)
+
+### 5.3 Request/Response Format
+
+**Create params:**
+```json
+{
+  "subscriber": {
+    "email": "user@example.com",
+    "note": "Optional note"
+  }
+}
+```
+
+**Update params (status management):**
+```json
+{
+  "subscriber": {
+    "active": true,
+    "verified": true,
+    "status": "active"
+  }
+}
+```
+
+**Response fields:**
+```json
+{
+  "id": 1,
+  "email": "user@example.com",
+  "verified": true,
+  "active": true,
+  "status": "active",
+  "newsletter_id": 1,
+  "verified_at": "2026-01-08T...",
+  "created_at": "2026-01-08T...",
+  "updated_at": "2026-01-08T..."
+}
+```
+
+### 5.4 Notes
+
+- **Upsert behavior:** If subscriber with same email exists, returns existing subscriber instead of creating duplicate
+- **Update endpoint:** Added to allow activating/verifying subscribers for testing purposes
+
+---
+
+## 6. Completed: Emails API
+
+### 6.1 Files Created/Modified
+
+| File | Action | Description |
+|------|--------|-------------|
+| `submodules/core/config/routes.rb` | Modified | Added emails routes nested under newsletters |
+| `submodules/core/app/controllers/api/v1/emails_controller.rb` | Created | Full CRUD + send/schedule functionality |
+| `test/controllers/api/v1/emails_controller_test.rb` | Created | Complete test coverage (15 tests) |
+| `test/fixtures/newsletter_emails.yml` | Modified | Added fixtures for default_user_workspace |
+
+### 6.2 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/newsletters/:newsletter_id/emails` | List emails (paginated, filterable) |
+| GET | `/api/v1/newsletters/:newsletter_id/emails/:id` | Get single email |
+| POST | `/api/v1/newsletters/:newsletter_id/emails` | Create email |
+| PATCH | `/api/v1/newsletters/:newsletter_id/emails/:id` | Update email (draft only) |
+| DELETE | `/api/v1/newsletters/:newsletter_id/emails/:id` | Delete email (draft only) |
+| POST | `/api/v1/newsletters/:newsletter_id/emails/:id/send` | Send or schedule email |
+
+**Filters for index:**
+- `status` - Filter by status (draft, scheduled, sent, failed)
+
+### 6.3 Request/Response Format
+
+**Create/Update params:**
+```json
+{
+  "email": {
+    "subject": "Newsletter Subject",
+    "preview": "Preview text shown in inbox",
+    "content_html": "<p>Email content</p>",
+    "content_json": {},
+    "author_id": 1
+  }
+}
+```
+
+**Send endpoint params:**
+```json
+{
+  "scheduled_at": "2026-01-15T10:00:00Z"
+}
+```
+- Without `scheduled_at`: Sends immediately
+- With `scheduled_at` (ISO 8601 future date): Schedules for later
+
+**Response fields:**
+```json
+{
+  "id": 1,
+  "subject": "Newsletter Subject",
+  "preview": "Preview text",
+  "slug": "newsletter-subject",
+  "status": "draft",
+  "content_html": "<p>Email content</p>",
+  "content_json": {},
+  "author_id": 1,
+  "newsletter_id": 1,
+  "scheduled_at": null,
+  "sent_at": null,
+  "created_at": "2026-01-08T...",
+  "updated_at": "2026-01-08T..."
+}
+```
+
+### 6.4 Business Rules
+
+- **Cannot update sent emails** - Returns 422 error
+- **Cannot delete sent emails** - Returns 422 error
+- **Cannot send without content** - Requires non-empty content_html
+- **Cannot send without subject** - Requires non-empty subject
+- **Cannot send without subscribers** - Requires at least one active and verified subscriber
+- **Cannot schedule in the past** - scheduled_at must be future date
+
+### 6.5 Known Issues
+
+- **SSL Certificate Error:** Local development environment may have SSL certificate issues when connecting to Postmark API. This is a local Ruby/OpenSSL configuration issue, not a code problem.
+
+---
+
+## 7. Technical Decisions
+
+### 7.1 JSON Key Format: `snake_case`
 
 **Decision:** Use `snake_case` for all JSON keys.
 
@@ -203,7 +401,7 @@
 
 **Alternative Considered:** `camelCase` (common for JS frontends) - rejected for consistency.
 
-### 3.2 Pagination: Pagy gem
+### 7.2 Pagination: Pagy gem
 
 **Decision:** Use Pagy gem for pagination (already in project).
 
@@ -216,7 +414,7 @@ pagy, records = pagy(scope, limit: limit, page: params[:page])
 - `page` - Page number (default: 1)
 - `size` - Items per page (default: 10, max: 100)
 
-### 3.3 Response Envelope Strategy
+### 7.3 Response Envelope Strategy
 
 **Decision:** Envelope for collections only, single resources unwrapped.
 
@@ -227,9 +425,9 @@ pagy, records = pagy(scope, limit: limit, page: params[:page])
 
 ---
 
-## 4. Implementation Challenges & Solutions
+## 8. Implementation Challenges & Solutions
 
-### 4.1 Concern Autoloading Issue
+### 8.1 Concern Autoloading Issue
 
 **Problem:** `API::V1::APIResponse` concern not being autoloaded by Zeitwerk.
 
@@ -258,7 +456,7 @@ module API
 end
 ```
 
-### 4.2 Module Naming with API Acronym
+### 8.2 Module Naming with API Acronym
 
 **Problem:** Zeitwerk inflection for "API" caused constant name mismatch.
 
@@ -269,13 +467,13 @@ end
 
 **Solution:** Name the module `API::V1::APIResponse` (uppercase API and Response).
 
-### 4.3 File Permissions
+### 8.3 File Permissions
 
 **Problem:** Concern file had restrictive permissions (600).
 
 **Solution:** `chmod 644` to make file readable.
 
-### 4.4 Test Fixtures - Page Domain Validation
+### 8.4 Test Fixtures - Page Domain Validation
 
 **Problem:** Tests failed with "Domain is invalid" when creating pages.
 
@@ -285,7 +483,7 @@ end
 1. Use fixtures with pre-set domains instead of creating pages in setup
 2. Set `ENV['PAGES_BASE_DOMAIN']` in test setup for create tests
 
-### 4.5 Test URL Generation - `to_param` Returns Slug
+### 8.5 Test URL Generation - `to_param` Returns Slug
 
 **Problem:** `api_v1_page_url(@page1)` generated URL with slug instead of ID.
 
@@ -300,7 +498,7 @@ get api_v1_page_url(@page1)  # => /api/v1/pages/my-slug
 get api_v1_page_url(id: @page1.id)  # => /api/v1/pages/123
 ```
 
-### 4.6 Test Database Setup
+### 8.6 Test Database Setup
 
 **Problem:** Test database on port 5434 not running.
 
@@ -309,7 +507,7 @@ get api_v1_page_url(id: @page1.id)  # => /api/v1/pages/123
 docker compose -f docker-compose.test.yaml up -d
 ```
 
-### 4.7 Migration Conflicts
+### 8.7 Migration Conflicts
 
 **Problem:** Duplicate migrations for `api_tokens` table.
 
@@ -319,7 +517,7 @@ docker compose -f docker-compose.test.yaml up -d
 
 ---
 
-## 5. File Structure
+## 9. File Structure
 
 ```
 submodules/core/
@@ -328,13 +526,14 @@ submodules/core/
 │       └── api/
 │           └── v1/
 │               ├── base_controller.rb
-│               ├── pages_controller.rb
-│               ├── categories_controller.rb (created, not tested)
-│               ├── posts_controller.rb (created, not tested)
-│               ├── images_controller.rb (created, not tested)
-│               ├── revisions_controller.rb (created, not tested)
-│               ├── newsletters_controller.rb (created, not tested)
-│               ├── subscribers_controller.rb (created, not tested)
+│               ├── pages_controller.rb (✅ tested)
+│               ├── categories_controller.rb (✅ tested)
+│               ├── posts_controller.rb (✅ tested)
+│               ├── images_controller.rb (✅ cover_image)
+│               ├── revisions_controller.rb (⏳ pending)
+│               ├── newsletters_controller.rb (✅ tested)
+│               ├── subscribers_controller.rb (✅ tested)
+│               ├── emails_controller.rb (✅ tested)
 │               └── concerns/
 │                   └── api_response.rb
 └── lib/
@@ -348,18 +547,24 @@ test/
 │           ├── base_controller_test.rb (existing)
 │           ├── pages_controller_test.rb (13 tests)
 │           ├── categories_controller_test.rb (16 tests)
-│           └── posts_controller_test.rb (22 tests)
+│           ├── posts_controller_test.rb (22 tests)
+│           ├── newsletters_controller_test.rb (13 tests)
+│           ├── subscribers_controller_test.rb (12 tests)
+│           └── emails_controller_test.rb (15 tests)
 └── fixtures/
     ├── pages.yml (updated)
     ├── categories.yml (updated)
     ├── posts.yml (updated)
     ├── authors.yml (updated)
-    └── post_authors.yml (updated)
+    ├── post_authors.yml (updated)
+    ├── newsletters.yml (updated)
+    ├── subscribers.yml (updated)
+    └── newsletter_emails.yml (updated)
 ```
 
 ---
 
-## 6. APIResponse Concern Details
+## 10. APIResponse Concern Details
 
 **Location:** `submodules/core/app/controllers/api/v1/concerns/api_response.rb`
 
@@ -378,7 +583,7 @@ test/
 
 ---
 
-## 8. Controllers Status
+## 11. Controllers Status
 
 | Controller | Status | Tests | Notes |
 |------------|--------|-------|-------|
@@ -386,24 +591,25 @@ test/
 | CategoriesController | ✅ Complete | 16 tests | Nested under pages |
 | PostsController | ✅ Complete | 22 tests | CRUD + publish + schedule |
 | ImagesController | ✅ Complete | - | Cover image (GET, POST, PUT, DELETE) |
+| NewslettersController | ✅ Complete | 13 tests | Workspace-level CRUD |
+| SubscribersController | ✅ Complete | 12 tests | CRUD + upsert, nested under newsletters |
+| EmailsController | ✅ Complete | 15 tests | CRUD + send/schedule, nested under newsletters |
 | RevisionsController | ⏳ Pending | - | List, create, show_last, update_last, apply_last, share_last |
-| NewslettersController | ⏳ Pending | - | CRUD at workspace level |
-| SubscribersController | ⏳ Pending | - | List, create (upsert), delete under newsletters |
 
-**Note:** All controllers have been updated to use `snake_case` JSON keys.
+**Note:** All controllers use `snake_case` JSON keys. Total: 91 tests across 6 controllers.
 
 ---
 
-## 9. Next Steps
+## 12. Next Steps
 
-1. **Update remaining controllers** to use `snake_case` JSON keys
-2. **Configure routes** for new controllers
-3. **Write tests** for each controller
-4. **Test manually** in Postman after each controller
+1. **Revisions API** - Implement tests for post revisions controller
+2. **Fix SSL issue** - Local development SSL certificate error with Postmark
+3. **Fix cover image display** - TODO: Check why cover image doesn't show on frontend
+4. **API Documentation** - Generate/update Apipie documentation
 
 ---
 
-## 9. Commands Reference
+## 13. Commands Reference
 
 ```bash
 # Start test database
