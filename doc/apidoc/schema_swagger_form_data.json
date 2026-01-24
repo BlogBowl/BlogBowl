@@ -1,0 +1,349 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "BlogBowl API (params in:formData)",
+    "description": "\n<p>Another API description</p>\n",
+    "version": "1.0",
+    "x-copyright": null
+  },
+  "basePath": "/api/v1",
+  "consumes": [
+    "application/x-www-form-urlencoded",
+    "multipart/form-data"
+  ],
+  "paths": {
+    "/pages": {
+      "get": {
+        "tags": [
+          "pages"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "multipart/form-data"
+        ],
+        "operationId": "get_pages",
+        "summary": "List all pages for the account",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of pages",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Page ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page name"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page slug"
+                },
+                "name_slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page name slug"
+                },
+                "domain": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page domain"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "name",
+                "slug",
+                "name_slug",
+                "domain",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "post": {
+        "tags": [
+          "pages"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "multipart/form-data"
+        ],
+        "operationId": "post_pages",
+        "summary": "Create a new page",
+        "parameters": [
+          {
+            "name": "page[name]",
+            "type": "string",
+            "in": "formData",
+            "required": true,
+            "description": "Page name"
+          },
+          {
+            "name": "page[slug]",
+            "type": "string",
+            "in": "formData",
+            "required": true,
+            "description": "Page slug"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created page",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Page ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page name"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page slug"
+                },
+                "name_slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page name slug"
+                },
+                "domain": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page domain"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "name",
+                "slug",
+                "name_slug",
+                "domain",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/pages/{id}": {
+      "get": {
+        "tags": [
+          "pages"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "multipart/form-data"
+        ],
+        "operationId": "get_pages_id",
+        "summary": "Get a specific page",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page details",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Page ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page name"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page slug"
+                },
+                "name_slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page name slug"
+                },
+                "domain": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page domain"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "name",
+                "slug",
+                "name_slug",
+                "domain",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "patch": {
+        "tags": [
+          "pages"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "multipart/form-data"
+        ],
+        "operationId": "patch_pages_id",
+        "summary": "Update a page",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "page[name]",
+            "type": "string",
+            "in": "formData",
+            "required": true,
+            "description": "Page name"
+          },
+          {
+            "name": "page[slug]",
+            "type": "string",
+            "in": "formData",
+            "required": true,
+            "description": "Page slug"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated page",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Page ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page name"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page slug"
+                },
+                "name_slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page name slug"
+                },
+                "domain": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page domain"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "name",
+                "slug",
+                "name_slug",
+                "domain",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    }
+  },
+  "definitions": {},
+  "schemes": [
+    "https"
+  ],
+  "tags": [],
+  "securityDefinitions": {},
+  "security": [],
+  "host": "localhost:3000"
+}
