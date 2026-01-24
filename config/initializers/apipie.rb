@@ -5,4 +5,5 @@ Apipie.configure do |config|
   # where is your API defined?
   config.api_controllers_matcher = ["#{Rails.root}/submodules/core/app/controllers/api/v1/**/*.rb"]
   config.validate                = false
+  config.generator.swagger.content_type_input = :json
 end
