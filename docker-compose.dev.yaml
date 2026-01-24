@@ -1,12 +1,12 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:latest
     environment:
       POSTGRES_DB: blogbowl
       POSTGRES_USER: development
       POSTGRES_PASSWORD: development
     volumes:
-      - bb_postgres_data:/var/lib/postgresql/data
+      - bb_postgres_data:/var/lib/postgresql
     ports:
       - "5435:5432"
     healthcheck:
