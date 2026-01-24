@@ -57,6 +57,30 @@ RAILS_ENV=development bin/rails db:migrate
 RAILS_ENV=development bin/rails db:seed
 ```
 
+### Submodule Workflow (core engine changes)
+Short flow for updating the core engine and syncing the parent repo:
+```bash
+# 1) Work in the standalone core repo
+cd ../blogbowl-core
+git checkout <branch>
+git status
+# ...edit, commit...
+git push fork <branch>
+
+# 2) Update submodule pointer in parent repo
+cd ../BlogBowl
+# Fetch from local sibling clone or from a remote (either is fine)
+git -C submodules/core fetch ../blogbowl-core   # local sibling clone linked to this submodule
+git -C submodules/core fetch fork               # or: git -C submodules/core fetch upstream
+git -C submodules/core checkout <core-commit-sha>
+git add submodules/core
+git commit -m "chore: bump blogbowl-core submodule"
+git push fork <branch>
+```
+Notes:
+- Parent repo stores only the submodule commit SHA; changing the submodule checkout and committing in the parent updates the pointer.
+- Remotes are named `fork` (dlysenko) and `upstream` (BlogBowl org).
+
 ## Architecture
 
 ### Submodule Structure
