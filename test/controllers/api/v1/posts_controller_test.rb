@@ -244,6 +244,156 @@ module API
         get api_v1_page_posts_url(page_id: @page.id), headers: { "Authorization" => "Bearer invalid" }
         assert_response :unauthorized
       end
+
+      # === TIPTAP CONVERSION ===
+
+      test "create with HTML auto-converts to JSON" do
+        html_content = '<h2>Test Title</h2><p>Test paragraph with <strong>bold</strong> text.</p>'
+
+        post api_v1_page_posts_url(page_id: @page.id),
+             params: { post: { title: "HTML Test", content_html: html_content } },
+             headers: @headers
+        assert_response :created
+
+        json = JSON.parse(response.body)
+        assert_equal html_content, json["content_html"]
+        assert_not_nil json["content_json"]
+        assert_kind_of Hash, json["content_json"]
+        assert_equal "doc", json["content_json"]["type"]
+        assert json["content_json"]["content"].length > 0
+      end
+
+      test "create with JSON auto-converts to HTML" do
+        json_content = {
+          "type" => "doc",
+          "content" => [
+            {
+              "type" => "heading",
+              "attrs" => { "level" => 2 },
+              "content" => [{ "type" => "text", "text" => "JSON Title" }]
+            },
+            {
+              "type" => "paragraph",
+              "content" => [{ "type" => "text", "text" => "JSON paragraph" }]
+            }
+          ]
+        }
+
+        post api_v1_page_posts_url(page_id: @page.id),
+             params: { post: { title: "JSON Test", content_json: json_content } },
+             headers: @headers
+        assert_response :created
+
+        json = JSON.parse(response.body)
+        # Check structure (level might be string due to JSON serialization)
+        assert_equal "doc", json["content_json"]["type"]
+        assert_equal 2, json["content_json"]["content"].length
+        assert_equal "heading", json["content_json"]["content"][0]["type"]
+        assert_equal "paragraph", json["content_json"]["content"][1]["type"]
+        assert_not_nil json["content_html"]
+        assert_kind_of String, json["content_html"]
+        assert_includes json["content_html"], "JSON Title"
+        assert_includes json["content_html"], "JSON paragraph"
+      end
+
+      test "update with HTML updates JSON" do
+        new_html = '<p>Updated HTML content</p>'
+
+        patch api_v1_page_post_url(page_id: @page.id, id: @post1.id),
+              params: { post: { content_html: new_html, content_json: nil } },
+              headers: @headers
+        assert_response :success
+
+        json = JSON.parse(response.body)
+        assert_equal new_html, json["content_html"]
+        assert_not_nil json["content_json"]
+        assert_includes json["content_json"].to_s, "Updated HTML content"
+      end
+
+      test "update with JSON updates HTML" do
+        new_json = {
+          "type" => "doc",
+          "content" => [
+            {
+              "type" => "paragraph",
+              "content" => [{ "type" => "text", "text" => "Updated JSON content" }]
+            }
+          ]
+        }
+
+        patch api_v1_page_post_url(page_id: @page.id, id: @post1.id),
+              params: { post: { content_json: new_json, content_html: nil } },
+              headers: @headers
+        assert_response :success
+
+        json = JSON.parse(response.body)
+        assert_equal new_json, json["content_json"]
+        assert_not_nil json["content_html"]
+        assert_includes json["content_html"], "Updated JSON content"
+      end
+
+      test "create with both HTML and JSON preserves both" do
+        html_content = '<p>HTML content</p>'
+        json_content = {
+          "type" => "doc",
+          "content" => [
+            {
+              "type" => "paragraph",
+              "content" => [{ "type" => "text", "text" => "JSON content" }]
+            }
+          ]
+        }
+
+        post api_v1_page_posts_url(page_id: @page.id),
+             params: { post: { title: "Both formats", content_html: html_content, content_json: json_content } },
+             headers: @headers
+        assert_response :created
+
+        json = JSON.parse(response.body)
+        assert_equal html_content, json["content_html"]
+        assert_equal json_content, json["content_json"]
+      end
+
+      test "handles complex HTML structures in conversion" do
+        complex_html = <<~HTML
+          <h2>Introduction</h2>
+          <p>This is a <strong>test</strong> with <em>formatting</em>.</p>
+          <ul>
+            <li>Item 1</li>
+            <li>Item 2</li>
+          </ul>
+          <p>Check out <a href="https://example.com">this link</a></p>
+        HTML
+
+        post api_v1_page_posts_url(page_id: @page.id),
+             params: { post: { title: "Complex HTML", content_html: complex_html } },
+             headers: @headers
+        assert_response :created
+
+        json = JSON.parse(response.body)
+        assert_not_nil json["content_json"]
+        assert json["content_json"]["content"].length > 1
+
+        # Verify structure includes heading, paragraph, list, etc.
+        types = json["content_json"]["content"].map { |c| c["type"] }
+        assert_includes types, "heading"
+        assert_includes types, "paragraph"
+      end
+
+      test "index returns posts with both content formats" do
+        # Create a post with HTML that will auto-convert
+        @post1.update!(content_html: '<p>Test content</p>', content_json: nil)
+        @post1.reload
+
+        get api_v1_page_posts_url(page_id: @page.id), headers: @headers
+        assert_response :success
+
+        json = JSON.parse(response.body)
+        post = json["result"].find { |p| p["id"] == @post1.id }
+
+        assert_not_nil post["content_html"]
+        assert_not_nil post["content_json"]
+      end
     end
   end
 end
