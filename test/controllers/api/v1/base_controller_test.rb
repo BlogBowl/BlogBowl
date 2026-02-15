@@ -14,9 +14,42 @@ module API
         get api_v1_pages_url, headers: { "Authorization" => "Bearer #{@token.token}" }
         assert_response :success
 
+        # Collections should return pagination envelope (Hash)
         json_response = JSON.parse(response.body)
-        assert_kind_of Array, json_response
-        assert_equal 0, json_response.length
+        assert_kind_of Hash, json_response
+        assert_equal 1, json_response['page']
+        assert_equal 10, json_response['size']
+        assert_equal 2, json_response['total']
+
+        # Envelope should contain array of resources in 'result'
+        assert_kind_of Array, json_response['result']
+        assert_equal 2, json_response['result'].length
+
+        # Each resource in the array should be a Hash
+        json_response['result'].each do |resource|
+          assert_kind_of Hash, resource
+          assert resource.key?('id')
+        end
+      end
+
+      test "should get single resource as unwrapped hash" do
+        page = @workspace.pages.first
+        get api_v1_page_url(id: page.id), headers: { "Authorization" => "Bearer #{@token.token}" }
+        assert_response :success
+
+        # Single resources should return unwrapped Hash (not pagination envelope)
+        json_response = JSON.parse(response.body)
+        assert_kind_of Hash, json_response
+
+        # Should have resource fields directly (not wrapped in 'result')
+        assert_equal page.id, json_response['id']
+        assert_equal page.name, json_response['name']
+
+        # Should NOT have pagination envelope keys
+        assert_nil json_response['page']
+        assert_nil json_response['size']
+        assert_nil json_response['total']
+        assert_nil json_response['result']
       end
 
       test "should return unauthorized without token" do

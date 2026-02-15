@@ -35,7 +35,7 @@ BlogBowl is an open-source, self-hosted blogging platform designed for **blogs, 
 
 ## 🛠 Getting started:
 
-### 🐳 Installing with Docker
+### 🐳 Installing with Docker (Production)
 1. Create .env file and paste content from `.env.example`.
 2. Adjust the values in `.env` to your setup.
 3. To start BlogBowl with postgres and redis run:
@@ -45,7 +45,137 @@ BlogBowl is an open-source, self-hosted blogging platform designed for **blogs, 
 4. Open your browser and visit:
     ```
     http://localhost:3000
-   ```
+    ```
+
+### 💻 Local Development Setup
+
+**Prerequisites:** Ruby 3.2.2, Bun, Docker
+
+1. Clone with submodules:
+    ```bash
+    git clone --recurse-submodules https://github.com/BlogBowl/BlogBowl.git
+    cd BlogBowl
+    ```
+
+2. Create `.env` file from example and set the database URL:
+    ```bash
+    cp .env.example .env
+    ```
+    Update `DATABASE_URL` in `.env`:
+    ```
+    DATABASE_URL=postgresql://development:development@localhost:5435/blogbowl
+    ```
+
+3. Add hostname to `/etc/hosts`:
+    ```bash
+    echo "127.0.0.1 blogbowl.test" | sudo tee -a /etc/hosts
+    ```
+
+4. Start infrastructure and install dependencies:
+    ```bash
+    docker compose -f docker-compose.dev.yaml up -d
+    bundle install
+    bun install
+    ```
+
+5. Setup database and start the server:
+    ```bash
+    RAILS_ENV=development bin/rails db:migrate db:seed
+    bin/dev
+    ```
+
+6. Open your browser and visit:
+    ```
+    http://blogbowl.test:3000/sign_in
+    ```
+
+### 🔧 Troubleshooting
+
+<details>
+<summary><b>Docker services not starting</b></summary>
+
+```bash
+# Check if ports are already in use
+lsof -i :5435  # PostgreSQL
+lsof -i :6380  # Redis
+
+# Restart Docker services
+docker compose -f docker-compose.dev.yaml down
+docker compose -f docker-compose.dev.yaml up -d
+
+# Check service health
+docker compose -f docker-compose.dev.yaml ps
+```
+</details>
+
+<details>
+<summary><b>Database connection errors</b></summary>
+
+```bash
+# Verify PostgreSQL is running and healthy
+docker compose -f docker-compose.dev.yaml ps postgres
+
+# Test connection manually
+psql postgresql://development:development@localhost:5435/blogbowl
+
+# Reset database if corrupted (Warning: deletes data)
+docker compose -f docker-compose.dev.yaml down -v
+docker compose -f docker-compose.dev.yaml up -d
+bin/rails db:prepare
+```
+</details>
+
+<details>
+<summary><b>Submodule issues</b></summary>
+
+```bash
+# Initialize submodules after fresh clone
+git submodule update --init --recursive
+
+# Update submodules to latest
+git submodule update --remote
+
+# Reset submodule to tracked commit
+git submodule update --force
+```
+</details>
+
+<details>
+<summary><b>Asset compilation errors</b></summary>
+
+```bash
+# Clear build artifacts and reinstall
+rm -rf node_modules app/assets/builds
+bun install
+bun build
+bun build:css
+```
+</details>
+
+<details>
+<summary><b>Host not resolving (blogbowl.test)</b></summary>
+
+Ensure `/etc/hosts` contains:
+```
+127.0.0.1 blogbowl.test
+```
+Flush DNS cache (macOS):
+```bash
+sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
+```
+</details>
+
+<details>
+<summary><b>Redis connection errors</b></summary>
+
+```bash
+# Check Redis is running
+docker compose -f docker-compose.dev.yaml ps redis
+
+# Test connection
+redis-cli -p 6380 ping  # Should return PONG
+```
+</details>
 
 ### 🔐 Default Credentials
 

@@ -12,3 +12,15 @@ two:
   description: Category 2 description
   slug: category-2
   page: one
+
+default_user_category_1:
+  name: Tech
+  description: Technology articles
+  slug: tech
+  page: default_user_page_1
+
+default_user_category_2:
+  name: News
+  description: Latest news
+  slug: news
+  page: default_user_page_1

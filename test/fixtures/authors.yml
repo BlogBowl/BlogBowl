@@ -42,3 +42,11 @@ email_author_workspace_owner:
 #  last_name: Pan
 #  email: peter@pan.com
 #  slug: 'peter-pan'
+
+default_user_author:
+  member: default_user_member
+  first_name: Test
+  last_name: Author
+  email: test@author.com
+  active: true
+  slug: 'test-author'

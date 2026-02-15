@@ -43,3 +43,8 @@
 
 /config/credentials.yml.enc
 
+# OS-generated files
+.DS_Store
+
+# Local tool config
+mise.toml

@@ -45,3 +45,25 @@ sent_email_three:
   status: sent
   postmark_tag: 03adeb89-d372-42b5-b541-1a322401c000
   author: email_author_workspace_owner
+
+default_user_email_1:
+  subject: Welcome Newsletter
+  newsletter: default_user_newsletter_1
+  slug: welcome-newsletter
+  preview: Welcome to our newsletter
+  content_html: <p>Welcome!</p>
+  content_json: { }
+  status: draft
+  author: default_user_author
+
+default_user_email_2:
+  subject: Product Update
+  newsletter: default_user_newsletter_1
+  slug: product-update
+  preview: Check out our new features
+  content_html: <p>New features!</p>
+  content_json: { }
+  status: sent
+  sent_at: <%= 1.day.ago.to_fs(:db) %>
+  postmark_tag: 04adeb89-d372-42b5-b541-1a322401c000
+  author: default_user_author
