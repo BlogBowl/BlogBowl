@@ -12,7 +12,7 @@ module API
         @token = APIToken.create!(name: "Test Token", user: @user, workspace: @workspace)
         @headers = { "Authorization" => "Bearer #{@token.token}" }
 
-        @image_file = fixture_file_upload("files/webplogo.webp", "image/webp")
+        @image_file = fixture_file_upload("webplogo.webp", "image/webp")
       end
 
       # === SHOW ===
@@ -74,7 +74,7 @@ module API
           content_type: "image/webp"
         )
 
-        new_file = fixture_file_upload("files/webplogo.webp", "image/webp")
+        new_file = fixture_file_upload("webplogo.webp", "image/webp")
         patch api_v1_page_post_cover_image_url(page_id: @page.id, post_id: @post.id),
               params: { file: new_file },
               headers: @headers
