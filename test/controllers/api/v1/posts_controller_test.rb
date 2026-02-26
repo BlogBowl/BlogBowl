@@ -155,6 +155,21 @@ module API
         assert_equal "Updated Title", @post1.title
       end
 
+      test "update automatically creates a history revision" do
+        initial_revision_count = @post1.post_revisions.count
+
+        patch api_v1_page_post_url(page_id: @page.id, id: @post1.id),
+              params: { post: { title: "Revised Title" } },
+              headers: @headers
+        assert_response :success
+
+        @post1.reload
+        assert_equal initial_revision_count + 1, @post1.post_revisions.count
+
+        last_revision = @post1.post_revisions.last
+        assert_equal "history", last_revision.kind
+      end
+
       test "update allows blank title for draft" do
         # Drafts allow blank titles (validation only on publish)
         patch api_v1_page_post_url(page_id: @page.id, id: @post1.id),
