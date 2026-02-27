@@ -11,47 +11,616 @@
     "application/json"
   ],
   "paths": {
-    "/pages": {
+    "/authors": {
       "get": {
         "tags": [
-          "pages"
+          "authors"
         ],
         "consumes": [
           "application/json"
         ],
-        "operationId": "get_pages",
-        "summary": "List all pages for the account",
-        "parameters": [],
+        "operationId": "get_authors",
+        "summary": "List all authors for the workspace",
+        "parameters": [
+          {
+            "name": "active",
+            "type": "boolean",
+            "in": "query",
+            "description": "Filter by active flag (defaults to true)"
+          },
+          {
+            "name": "page",
+            "type": "number",
+            "in": "query",
+            "default": 1,
+            "description": "Page number"
+          },
+          {
+            "name": "size",
+            "type": "number",
+            "in": "query",
+            "default": 10,
+            "description": "Items per page (max: 100)"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "List of pages",
+            "description": "Paginated list of authors",
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "post": {
+        "tags": [
+          "authors"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "post_authors",
+        "summary": "Create (or reactivate) an author for current workspace member",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "first_name": {
+                  "type": "string",
+                  "description": "First name"
+                },
+                "last_name": {
+                  "type": "string",
+                  "description": "Last name"
+                },
+                "email": {
+                  "type": "string",
+                  "description": "Author email"
+                },
+                "position": {
+                  "type": "string",
+                  "description": "Position"
+                },
+                "short_description": {
+                  "type": "string",
+                  "description": "Short description"
+                },
+                "long_description": {
+                  "type": "string",
+                  "description": "Long description"
+                },
+                "avatar_picture": {
+                  "type": "file",
+                  "description": "Avatar image"
+                },
+                "og_image": {
+                  "type": "file",
+                  "description": "Open Graph image"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created author",
             "schema": {
               "type": "object",
               "properties": {
                 "id": {
                   "type": "number",
                   "required": true,
-                  "description": "Page ID"
+                  "description": "Author ID"
                 },
-                "name": {
+                "first_name": {
                   "type": "string",
                   "required": true,
-                  "description": "Page name"
+                  "description": "First name"
+                },
+                "last_name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Last name"
+                },
+                "formatted_name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Formatted name"
+                },
+                "email": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Author email"
+                },
+                "position": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Author position"
+                },
+                "short_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Short description"
+                },
+                "long_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Long description"
                 },
                 "slug": {
                   "type": "string",
                   "required": true,
-                  "description": "Page slug"
+                  "description": "Author slug"
                 },
-                "name_slug": {
+                "active": {
+                  "type": "boolean",
+                  "required": true,
+                  "description": "Author active flag"
+                },
+                "avatar": {
                   "type": "string",
                   "required": true,
-                  "description": "Page name slug"
+                  "description": "Avatar URL"
                 },
-                "domain": {
+                "created_at": {
                   "type": "string",
                   "required": true,
-                  "description": "Page domain"
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "first_name",
+                "last_name",
+                "formatted_name",
+                "email",
+                "position",
+                "short_description",
+                "long_description",
+                "slug",
+                "active",
+                "avatar",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/authors/{id}": {
+      "get": {
+        "tags": [
+          "authors"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "get_authors_id",
+        "summary": "Get a specific author",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Author ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Author details",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Author ID"
+                },
+                "first_name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "First name"
+                },
+                "last_name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Last name"
+                },
+                "formatted_name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Formatted name"
+                },
+                "email": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Author email"
+                },
+                "position": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Author position"
+                },
+                "short_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Short description"
+                },
+                "long_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Long description"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Author slug"
+                },
+                "active": {
+                  "type": "boolean",
+                  "required": true,
+                  "description": "Author active flag"
+                },
+                "avatar": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Avatar URL"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "first_name",
+                "last_name",
+                "formatted_name",
+                "email",
+                "position",
+                "short_description",
+                "long_description",
+                "slug",
+                "active",
+                "avatar",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "patch": {
+        "tags": [
+          "authors"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "patch_authors_id",
+        "summary": "Update an author",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Author ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "first_name": {
+                  "type": "string",
+                  "description": "First name"
+                },
+                "last_name": {
+                  "type": "string",
+                  "description": "Last name"
+                },
+                "email": {
+                  "type": "string",
+                  "description": "Author email"
+                },
+                "position": {
+                  "type": "string",
+                  "description": "Position"
+                },
+                "short_description": {
+                  "type": "string",
+                  "description": "Short description"
+                },
+                "long_description": {
+                  "type": "string",
+                  "description": "Long description"
+                },
+                "active": {
+                  "type": "boolean",
+                  "description": "Author active flag"
+                },
+                "avatar_picture": {
+                  "type": "file",
+                  "description": "Avatar image"
+                },
+                "og_image": {
+                  "type": "file",
+                  "description": "Open Graph image"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated author",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Author ID"
+                },
+                "first_name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "First name"
+                },
+                "last_name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Last name"
+                },
+                "formatted_name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Formatted name"
+                },
+                "email": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Author email"
+                },
+                "position": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Author position"
+                },
+                "short_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Short description"
+                },
+                "long_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Long description"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Author slug"
+                },
+                "active": {
+                  "type": "boolean",
+                  "required": true,
+                  "description": "Author active flag"
+                },
+                "avatar": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Avatar URL"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "first_name",
+                "last_name",
+                "formatted_name",
+                "email",
+                "position",
+                "short_description",
+                "long_description",
+                "slug",
+                "active",
+                "avatar",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "delete": {
+        "tags": [
+          "authors"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "delete_authors_id",
+        "summary": "Deactivate an author",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Author ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Author deactivated",
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/pages/{page_id}/categories": {
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "get_pages_page_id_categories",
+        "summary": "List all categories for a page",
+        "parameters": [
+          {
+            "name": "page_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "page",
+            "type": "number",
+            "in": "query",
+            "default": 1,
+            "description": "Page number"
+          },
+          {
+            "name": "size",
+            "type": "number",
+            "in": "query",
+            "default": 10,
+            "description": "Items per page (max: 100)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of categories",
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "post": {
+        "tags": [
+          "categories"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "post_pages_page_id_categories",
+        "summary": "Create a new category",
+        "parameters": [
+          {
+            "name": "page_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category name"
+                },
+                "slug": {
+                  "type": "string",
+                  "description": "Category slug"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Category description"
+                },
+                "color": {
+                  "type": "string",
+                  "description": "Category color (hex)"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "name"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created category",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Category ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category name"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category slug"
+                },
+                "description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category description"
+                },
+                "color": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category color"
+                },
+                "page_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Page ID"
                 },
                 "created_at": {
                   "type": "string",
@@ -69,12 +638,1234 @@
                 "id",
                 "name",
                 "slug",
-                "name_slug",
-                "domain",
+                "description",
+                "color",
+                "page_id",
                 "created_at",
                 "updated_at"
               ]
             },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/pages/{page_id}/categories/{id}": {
+      "get": {
+        "tags": [
+          "categories"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "get_pages_page_id_categories_id",
+        "summary": "Get a specific category",
+        "parameters": [
+          {
+            "name": "page_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Category ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category details",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Category ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category name"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category slug"
+                },
+                "description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category description"
+                },
+                "color": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category color"
+                },
+                "page_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Page ID"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "name",
+                "slug",
+                "description",
+                "color",
+                "page_id",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "patch": {
+        "tags": [
+          "categories"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "patch_pages_page_id_categories_id",
+        "summary": "Update a category",
+        "parameters": [
+          {
+            "name": "page_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Category ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Category name"
+                },
+                "slug": {
+                  "type": "string",
+                  "description": "Category slug"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Category description"
+                },
+                "color": {
+                  "type": "string",
+                  "description": "Category color (hex)"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated category",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Category ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category name"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category slug"
+                },
+                "description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category description"
+                },
+                "color": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Category color"
+                },
+                "page_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Page ID"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "name",
+                "slug",
+                "description",
+                "color",
+                "page_id",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "delete": {
+        "tags": [
+          "categories"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "delete_pages_page_id_categories_id",
+        "summary": "Delete a category",
+        "parameters": [
+          {
+            "name": "page_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Category ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Category deleted",
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/newsletters/{newsletter_id}/emails": {
+      "get": {
+        "tags": [
+          "emails"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "get_newsletters_newsletter_id_emails",
+        "summary": "List all emails for a newsletter",
+        "parameters": [
+          {
+            "name": "newsletter_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Newsletter ID"
+          },
+          {
+            "name": "status",
+            "type": "string",
+            "in": "query",
+            "description": "Filter by status (draft, scheduled, sent, failed)"
+          },
+          {
+            "name": "page",
+            "type": "number",
+            "in": "query",
+            "default": 1,
+            "description": "Page number"
+          },
+          {
+            "name": "size",
+            "type": "number",
+            "in": "query",
+            "default": 10,
+            "description": "Items per page (max: 100)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of emails",
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "post": {
+        "tags": [
+          "emails"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "post_newsletters_newsletter_id_emails",
+        "summary": "Create a new email",
+        "parameters": [
+          {
+            "name": "newsletter_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Newsletter ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subject": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email subject"
+                },
+                "preview": {
+                  "type": "string",
+                  "description": "Email preview text"
+                },
+                "content_html": {
+                  "type": "string",
+                  "description": "Email HTML content"
+                },
+                "content_md": {
+                  "type": "string",
+                  "description": "Email content in Markdown"
+                },
+                "author_id": {
+                  "type": "number",
+                  "description": "Author ID"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "subject"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created email",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Email ID"
+                },
+                "subject": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email subject"
+                },
+                "preview": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email preview text"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email slug"
+                },
+                "status": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email status (draft, scheduled, sent, failed)"
+                },
+                "content_html": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email HTML content"
+                },
+                "content_json": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": true,
+                  "description": "Email JSON content"
+                },
+                "author_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Author ID"
+                },
+                "newsletter_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Newsletter ID"
+                },
+                "scheduled_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Scheduled send date"
+                },
+                "sent_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Actual send date"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "subject",
+                "preview",
+                "slug",
+                "status",
+                "content_html",
+                "content_json",
+                "author_id",
+                "newsletter_id",
+                "scheduled_at",
+                "sent_at",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/newsletters/{newsletter_id}/emails/{id}": {
+      "get": {
+        "tags": [
+          "emails"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "get_newsletters_newsletter_id_emails_id",
+        "summary": "Get a specific email",
+        "parameters": [
+          {
+            "name": "newsletter_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Newsletter ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Email ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email details",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Email ID"
+                },
+                "subject": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email subject"
+                },
+                "preview": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email preview text"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email slug"
+                },
+                "status": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email status (draft, scheduled, sent, failed)"
+                },
+                "content_html": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email HTML content"
+                },
+                "content_json": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": true,
+                  "description": "Email JSON content"
+                },
+                "author_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Author ID"
+                },
+                "newsletter_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Newsletter ID"
+                },
+                "scheduled_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Scheduled send date"
+                },
+                "sent_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Actual send date"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "subject",
+                "preview",
+                "slug",
+                "status",
+                "content_html",
+                "content_json",
+                "author_id",
+                "newsletter_id",
+                "scheduled_at",
+                "sent_at",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "patch": {
+        "tags": [
+          "emails"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "patch_newsletters_newsletter_id_emails_id",
+        "summary": "Update an email (draft only)",
+        "parameters": [
+          {
+            "name": "newsletter_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Newsletter ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Email ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subject": {
+                  "type": "string",
+                  "description": "Email subject"
+                },
+                "preview": {
+                  "type": "string",
+                  "description": "Email preview text"
+                },
+                "content_html": {
+                  "type": "string",
+                  "description": "Email HTML content"
+                },
+                "content_md": {
+                  "type": "string",
+                  "description": "Email content in Markdown"
+                },
+                "author_id": {
+                  "type": "number",
+                  "description": "Author ID"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated email",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Email ID"
+                },
+                "subject": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email subject"
+                },
+                "preview": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email preview text"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email slug"
+                },
+                "status": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email status (draft, scheduled, sent, failed)"
+                },
+                "content_html": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email HTML content"
+                },
+                "content_json": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": true,
+                  "description": "Email JSON content"
+                },
+                "author_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Author ID"
+                },
+                "newsletter_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Newsletter ID"
+                },
+                "scheduled_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Scheduled send date"
+                },
+                "sent_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Actual send date"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "subject",
+                "preview",
+                "slug",
+                "status",
+                "content_html",
+                "content_json",
+                "author_id",
+                "newsletter_id",
+                "scheduled_at",
+                "sent_at",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "delete": {
+        "tags": [
+          "emails"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "delete_newsletters_newsletter_id_emails_id",
+        "summary": "Delete an email (draft only)",
+        "parameters": [
+          {
+            "name": "newsletter_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Newsletter ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Email ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Email deleted",
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/newsletters/{newsletter_id}/emails/{id}/send": {
+      "post": {
+        "tags": [
+          "emails"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "post_newsletters_newsletter_id_emails_id_send",
+        "summary": "Send or schedule an email",
+        "parameters": [
+          {
+            "name": "newsletter_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Newsletter ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Email ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "scheduled_at": {
+                  "type": "string",
+                  "description": "Schedule for future (ISO 8601 format). Omit to send immediately."
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email queued for sending",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Email ID"
+                },
+                "subject": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email subject"
+                },
+                "preview": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email preview text"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email slug"
+                },
+                "status": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email status (draft, scheduled, sent, failed)"
+                },
+                "content_html": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Email HTML content"
+                },
+                "content_json": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": true,
+                  "description": "Email JSON content"
+                },
+                "author_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Author ID"
+                },
+                "newsletter_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Newsletter ID"
+                },
+                "scheduled_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Scheduled send date"
+                },
+                "sent_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Actual send date"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "subject",
+                "preview",
+                "slug",
+                "status",
+                "content_html",
+                "content_json",
+                "author_id",
+                "newsletter_id",
+                "scheduled_at",
+                "sent_at",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/images/upload": {
+      "post": {
+        "tags": [
+          "images"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "post_images_upload",
+        "summary": "Upload an image and return its URL",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "file": {
+                  "type": "file",
+                  "required": true,
+                  "description": "Image file to upload"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "file"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Uploaded image URL",
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/newsletters": {
+      "get": {
+        "tags": [
+          "newsletters"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "get_newsletters",
+        "summary": "List all newsletters for the workspace",
+        "parameters": [
+          {
+            "name": "page",
+            "type": "number",
+            "in": "query",
+            "default": 1,
+            "description": "Page number"
+          },
+          {
+            "name": "size",
+            "type": "number",
+            "in": "query",
+            "default": 10,
+            "description": "Items per page (max: 100)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of newsletters",
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "post": {
+        "tags": [
+          "newsletters"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "post_newsletters",
+        "summary": "Create a new newsletter",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Newsletter name"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "name"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created newsletter",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Newsletter ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Newsletter name"
+                },
+                "name_slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Newsletter slug"
+                },
+                "workspace_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Workspace ID"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "name",
+                "name_slug",
+                "workspace_id",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/newsletters/{id}": {
+      "get": {
+        "tags": [
+          "newsletters"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "get_newsletters_id",
+        "summary": "Get a specific newsletter",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Newsletter ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Newsletter details",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Newsletter ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Newsletter name"
+                },
+                "name_slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Newsletter slug"
+                },
+                "workspace_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Workspace ID"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "name",
+                "name_slug",
+                "workspace_id",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "patch": {
+        "tags": [
+          "newsletters"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "patch_newsletters_id",
+        "summary": "Update a newsletter",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Newsletter ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Newsletter name"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated newsletter",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Newsletter ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Newsletter name"
+                },
+                "name_slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Newsletter slug"
+                },
+                "workspace_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Workspace ID"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "name",
+                "name_slug",
+                "workspace_id",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/pages": {
+      "get": {
+        "tags": [
+          "pages"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "get_pages",
+        "summary": "List all pages for the workspace",
+        "parameters": [
+          {
+            "name": "page",
+            "type": "number",
+            "in": "query",
+            "default": 1,
+            "description": "Page number"
+          },
+          {
+            "name": "size",
+            "type": "number",
+            "in": "query",
+            "default": 10,
+            "description": "Items per page (max: 100)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of pages",
             "headers": {}
           }
         },
@@ -96,30 +1887,19 @@
             "schema": {
               "type": "object",
               "properties": {
-                "page": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "required": true,
-                      "description": "Page name"
-                    },
-                    "slug": {
-                      "type": "string",
-                      "required": true,
-                      "description": "Page slug"
-                    }
-                  },
-                  "additionalProperties": false,
-                  "required": [
-                    "name",
-                    "slug"
-                  ]
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Page name"
+                },
+                "slug": {
+                  "type": "string",
+                  "description": "Page slug"
                 }
               },
               "additionalProperties": false,
               "required": [
-                "page"
+                "name"
               ]
             }
           }
@@ -155,6 +1935,11 @@
                   "required": true,
                   "description": "Page domain"
                 },
+                "workspace_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Workspace ID"
+                },
                 "created_at": {
                   "type": "string",
                   "required": true,
@@ -173,6 +1958,7 @@
                 "slug",
                 "name_slug",
                 "domain",
+                "workspace_id",
                 "created_at",
                 "updated_at"
               ]
@@ -233,6 +2019,11 @@
                   "required": true,
                   "description": "Page domain"
                 },
+                "workspace_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Workspace ID"
+                },
                 "created_at": {
                   "type": "string",
                   "required": true,
@@ -251,6 +2042,7 @@
                 "slug",
                 "name_slug",
                 "domain",
+                "workspace_id",
                 "created_at",
                 "updated_at"
               ]
@@ -283,31 +2075,16 @@
             "schema": {
               "type": "object",
               "properties": {
-                "page": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "required": true,
-                      "description": "Page name"
-                    },
-                    "slug": {
-                      "type": "string",
-                      "required": true,
-                      "description": "Page slug"
-                    }
-                  },
-                  "additionalProperties": false,
-                  "required": [
-                    "name",
-                    "slug"
-                  ]
+                "name": {
+                  "type": "string",
+                  "description": "Page name"
+                },
+                "slug": {
+                  "type": "string",
+                  "description": "Page slug"
                 }
               },
-              "additionalProperties": false,
-              "required": [
-                "page"
-              ]
+              "additionalProperties": false
             }
           }
         ],
@@ -342,6 +2119,11 @@
                   "required": true,
                   "description": "Page domain"
                 },
+                "workspace_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Workspace ID"
+                },
                 "created_at": {
                   "type": "string",
                   "required": true,
@@ -360,10 +2142,1044 @@
                 "slug",
                 "name_slug",
                 "domain",
+                "workspace_id",
                 "created_at",
                 "updated_at"
               ]
             },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/pages/{page_id}/posts": {
+      "get": {
+        "tags": [
+          "posts"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "get_pages_page_id_posts",
+        "summary": "List all posts for a page",
+        "parameters": [
+          {
+            "name": "page_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "status",
+            "type": "string",
+            "in": "query",
+            "description": "Filter by status (draft, published, scheduled)"
+          },
+          {
+            "name": "category_id",
+            "type": "number",
+            "in": "query",
+            "description": "Filter by category ID"
+          },
+          {
+            "name": "page",
+            "type": "number",
+            "in": "query",
+            "default": 1,
+            "description": "Page number"
+          },
+          {
+            "name": "size",
+            "type": "number",
+            "in": "query",
+            "default": 10,
+            "description": "Items per page (max: 100)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of posts",
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "post": {
+        "tags": [
+          "posts"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "post_pages_page_id_posts",
+        "summary": "Create a new post",
+        "parameters": [
+          {
+            "name": "page_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post title"
+                },
+                "content_html": {
+                  "type": "string",
+                  "description": "Post content in HTML"
+                },
+                "content_md": {
+                  "type": "string",
+                  "description": "Post content in Markdown"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Post description"
+                },
+                "category_id": {
+                  "type": "number",
+                  "description": "Category ID"
+                },
+                "seo_title": {
+                  "type": "string",
+                  "description": "SEO title"
+                },
+                "seo_description": {
+                  "type": "string",
+                  "description": "SEO description"
+                },
+                "og_title": {
+                  "type": "string",
+                  "description": "Open Graph title"
+                },
+                "og_description": {
+                  "type": "string",
+                  "description": "Open Graph description"
+                },
+                "cover_image_url": {
+                  "type": "string",
+                  "description": "Cover image URL"
+                },
+                "og_image_url": {
+                  "type": "string",
+                  "description": "Open Graph image URL"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "title"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created post",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Post ID"
+                },
+                "title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post title"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post slug"
+                },
+                "status": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post status (draft, published, scheduled)"
+                },
+                "description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post description"
+                },
+                "content_html": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post content in HTML"
+                },
+                "content_json": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": true,
+                  "description": "Post content in TipTap JSON"
+                },
+                "seo_title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "SEO title"
+                },
+                "seo_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "SEO description"
+                },
+                "og_title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph title"
+                },
+                "og_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph description"
+                },
+                "cover_image_url": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Cover image URL"
+                },
+                "og_image_url": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph image URL"
+                },
+                "category_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Category ID"
+                },
+                "page_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Page ID"
+                },
+                "scheduled_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Scheduled publish date"
+                },
+                "first_published_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "First published date"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "title",
+                "slug",
+                "status",
+                "description",
+                "content_html",
+                "content_json",
+                "seo_title",
+                "seo_description",
+                "og_title",
+                "og_description",
+                "cover_image_url",
+                "og_image_url",
+                "category_id",
+                "page_id",
+                "scheduled_at",
+                "first_published_at",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/pages/{page_id}/posts/{id}": {
+      "get": {
+        "tags": [
+          "posts"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "get_pages_page_id_posts_id",
+        "summary": "Get a specific post",
+        "parameters": [
+          {
+            "name": "page_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Post ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post details",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Post ID"
+                },
+                "title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post title"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post slug"
+                },
+                "status": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post status (draft, published, scheduled)"
+                },
+                "description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post description"
+                },
+                "content_html": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post content in HTML"
+                },
+                "content_json": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": true,
+                  "description": "Post content in TipTap JSON"
+                },
+                "seo_title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "SEO title"
+                },
+                "seo_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "SEO description"
+                },
+                "og_title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph title"
+                },
+                "og_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph description"
+                },
+                "cover_image_url": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Cover image URL"
+                },
+                "og_image_url": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph image URL"
+                },
+                "category_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Category ID"
+                },
+                "page_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Page ID"
+                },
+                "scheduled_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Scheduled publish date"
+                },
+                "first_published_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "First published date"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "title",
+                "slug",
+                "status",
+                "description",
+                "content_html",
+                "content_json",
+                "seo_title",
+                "seo_description",
+                "og_title",
+                "og_description",
+                "cover_image_url",
+                "og_image_url",
+                "category_id",
+                "page_id",
+                "scheduled_at",
+                "first_published_at",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "patch": {
+        "tags": [
+          "posts"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "patch_pages_page_id_posts_id",
+        "summary": "Update a post",
+        "parameters": [
+          {
+            "name": "page_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Post ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Post title"
+                },
+                "content_html": {
+                  "type": "string",
+                  "description": "Post content in HTML"
+                },
+                "content_md": {
+                  "type": "string",
+                  "description": "Post content in Markdown"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Post description"
+                },
+                "category_id": {
+                  "type": "number",
+                  "description": "Category ID"
+                },
+                "seo_title": {
+                  "type": "string",
+                  "description": "SEO title"
+                },
+                "seo_description": {
+                  "type": "string",
+                  "description": "SEO description"
+                },
+                "og_title": {
+                  "type": "string",
+                  "description": "Open Graph title"
+                },
+                "og_description": {
+                  "type": "string",
+                  "description": "Open Graph description"
+                },
+                "cover_image_url": {
+                  "type": "string",
+                  "description": "Cover image URL"
+                },
+                "og_image_url": {
+                  "type": "string",
+                  "description": "Open Graph image URL"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated post",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Post ID"
+                },
+                "title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post title"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post slug"
+                },
+                "status": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post status (draft, published, scheduled)"
+                },
+                "description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post description"
+                },
+                "content_html": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post content in HTML"
+                },
+                "content_json": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": true,
+                  "description": "Post content in TipTap JSON"
+                },
+                "seo_title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "SEO title"
+                },
+                "seo_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "SEO description"
+                },
+                "og_title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph title"
+                },
+                "og_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph description"
+                },
+                "cover_image_url": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Cover image URL"
+                },
+                "og_image_url": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph image URL"
+                },
+                "category_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Category ID"
+                },
+                "page_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Page ID"
+                },
+                "scheduled_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Scheduled publish date"
+                },
+                "first_published_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "First published date"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "title",
+                "slug",
+                "status",
+                "description",
+                "content_html",
+                "content_json",
+                "seo_title",
+                "seo_description",
+                "og_title",
+                "og_description",
+                "cover_image_url",
+                "og_image_url",
+                "category_id",
+                "page_id",
+                "scheduled_at",
+                "first_published_at",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "delete": {
+        "tags": [
+          "posts"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "delete_pages_page_id_posts_id",
+        "summary": "Delete a post",
+        "parameters": [
+          {
+            "name": "page_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Post ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Post deleted",
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/pages/{page_id}/posts/{id}/publish": {
+      "post": {
+        "tags": [
+          "posts"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "post_pages_page_id_posts_id_publish",
+        "summary": "Publish a post",
+        "parameters": [
+          {
+            "name": "page_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Page ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Post ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "scheduled_at": {
+                  "type": "string",
+                  "description": "Schedule publish for a future date (ISO 8601)"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published/scheduled post",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Post ID"
+                },
+                "title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post title"
+                },
+                "slug": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post slug"
+                },
+                "status": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post status (draft, published, scheduled)"
+                },
+                "description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post description"
+                },
+                "content_html": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Post content in HTML"
+                },
+                "content_json": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": true,
+                  "description": "Post content in TipTap JSON"
+                },
+                "seo_title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "SEO title"
+                },
+                "seo_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "SEO description"
+                },
+                "og_title": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph title"
+                },
+                "og_description": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph description"
+                },
+                "cover_image_url": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Cover image URL"
+                },
+                "og_image_url": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Open Graph image URL"
+                },
+                "category_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Category ID"
+                },
+                "page_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Page ID"
+                },
+                "scheduled_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Scheduled publish date"
+                },
+                "first_published_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "First published date"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "title",
+                "slug",
+                "status",
+                "description",
+                "content_html",
+                "content_json",
+                "seo_title",
+                "seo_description",
+                "og_title",
+                "og_description",
+                "cover_image_url",
+                "og_image_url",
+                "category_id",
+                "page_id",
+                "scheduled_at",
+                "first_published_at",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/newsletters/{newsletter_id}/subscribers": {
+      "get": {
+        "tags": [
+          "subscribers"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "get_newsletters_newsletter_id_subscribers",
+        "summary": "List all subscribers for a newsletter",
+        "parameters": [
+          {
+            "name": "newsletter_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Newsletter ID"
+          },
+          {
+            "name": "status",
+            "type": "string",
+            "in": "query",
+            "description": "Filter by status"
+          },
+          {
+            "name": "verified",
+            "type": "boolean",
+            "in": "query",
+            "description": "Filter by verification status"
+          },
+          {
+            "name": "page",
+            "type": "number",
+            "in": "query",
+            "default": 1,
+            "description": "Page number"
+          },
+          {
+            "name": "size",
+            "type": "number",
+            "in": "query",
+            "default": 10,
+            "description": "Items per page (max: 100)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of subscribers",
+            "headers": {}
+          }
+        },
+        "description": ""
+      },
+      "post": {
+        "tags": [
+          "subscribers"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "post_newsletters_newsletter_id_subscribers",
+        "summary": "Create a subscriber (upsert by email)",
+        "parameters": [
+          {
+            "name": "newsletter_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Newsletter ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Subscriber email"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Optional note"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "email"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created or existing subscriber",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Subscriber ID"
+                },
+                "email": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Subscriber email"
+                },
+                "verified": {
+                  "type": "boolean",
+                  "required": true,
+                  "description": "Email verified"
+                },
+                "active": {
+                  "type": "boolean",
+                  "required": true,
+                  "description": "Subscriber active"
+                },
+                "status": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Subscriber status"
+                },
+                "newsletter_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "Newsletter ID"
+                },
+                "verified_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Verification date"
+                },
+                "created_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Creation date"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "required": true,
+                  "description": "Updated date"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "email",
+                "verified",
+                "active",
+                "status",
+                "newsletter_id",
+                "verified_at",
+                "created_at",
+                "updated_at"
+              ]
+            },
+            "headers": {}
+          }
+        },
+        "description": ""
+      }
+    },
+    "/newsletters/{newsletter_id}/subscribers/{id}": {
+      "delete": {
+        "tags": [
+          "subscribers"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "delete_newsletters_newsletter_id_subscribers_id",
+        "summary": "Remove a subscriber",
+        "parameters": [
+          {
+            "name": "newsletter_id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Newsletter ID"
+          },
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "required": true,
+            "description": "Subscriber ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Subscriber deleted",
             "headers": {}
           }
         },
