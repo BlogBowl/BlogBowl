@@ -36,16 +36,17 @@ class TiptapContentTest < ActiveSupport::TestCase
     assert_includes @post.content_html, "Test content"
   end
 
-  test "does not convert if both HTML and JSON are present" do
-    original_html = '<p>Original HTML</p>'
-    original_json = { "type" => "doc", "content" => [] }
-
-    @post.content_html = original_html
-    @post.content_json = original_json
+  test "HTML always drives JSON even when both are explicitly set" do
+    # When content_html changes, JSON is always regenerated from it.
+    # Explicitly setting content_json is ignored — HTML is the source of truth.
+    @post.content_html = '<p>Original HTML</p>'
+    @post.content_json = { "type" => "doc", "content" => [] }
 
     assert @post.save
-    assert_equal original_html, @post.content_html
-    assert_equal original_json, @post.content_json
+    assert_equal "<p>Original HTML</p>", @post.content_html
+    assert_equal "doc", @post.content_json["type"]
+    # JSON is derived from HTML, not the empty array we set
+    assert @post.content_json["content"].length > 0
   end
 
   test "does not convert if both HTML and JSON are blank" do

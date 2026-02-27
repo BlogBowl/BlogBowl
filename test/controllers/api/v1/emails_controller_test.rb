@@ -167,6 +167,72 @@ module API
             headers: { "Authorization" => "Bearer invalid" }
         assert_response :unauthorized
       end
+
+      # === TIPTAP CONVERSION ===
+
+      test "create with content_html auto-converts to JSON" do
+        post api_v1_newsletter_emails_url(newsletter_id: @newsletter.id),
+             params: { email: { subject: "HTML Email", content_html: "<p>Email <strong>content</strong></p>" } },
+             headers: @headers
+        assert_response :created
+
+        json = JSON.parse(response.body)
+        assert_equal "<p>Email <strong>content</strong></p>", json["content_html"]
+        assert_not_nil json["content_json"]
+        assert_kind_of Hash, json["content_json"]
+        assert_equal "doc", json["content_json"]["type"]
+      end
+
+      test "create with content_md generates HTML and JSON" do
+        post api_v1_newsletter_emails_url(newsletter_id: @newsletter.id),
+             params: { email: { subject: "MD Email", content_md: "# Newsletter Title\n\nBody text." } },
+             headers: @headers
+        assert_response :created
+
+        json = JSON.parse(response.body)
+        assert_not_nil json["content_html"]
+        assert_includes json["content_html"], "Newsletter Title"
+        assert_not_nil json["content_json"]
+        assert_equal "doc", json["content_json"]["type"]
+      end
+
+      test "update with content_html updates JSON" do
+        patch api_v1_newsletter_email_url(newsletter_id: @newsletter.id, id: @email1.id),
+              params: { email: { content_html: "<p>Updated content</p>" } },
+              headers: @headers
+        assert_response :success
+
+        json = JSON.parse(response.body)
+        assert_equal "<p>Updated content</p>", json["content_html"]
+        assert_not_nil json["content_json"]
+        assert_includes json["content_json"].to_s, "Updated content"
+      end
+
+      test "update with content_md updates HTML and JSON" do
+        patch api_v1_newsletter_email_url(newsletter_id: @newsletter.id, id: @email1.id),
+              params: { email: { content_md: "## Updated via MD\n\nNew content." } },
+              headers: @headers
+        assert_response :success
+
+        json = JSON.parse(response.body)
+        assert_not_nil json["content_html"]
+        assert_includes json["content_html"], "Updated via MD"
+        assert_not_nil json["content_json"]
+        assert_equal "doc", json["content_json"]["type"]
+      end
+
+      test "create with HTML strips unsafe tags" do
+        dirty_html = '<p>Safe content</p><script>alert("xss")</script>'
+
+        post api_v1_newsletter_emails_url(newsletter_id: @newsletter.id),
+             params: { email: { subject: "Sanitize Test", content_html: dirty_html } },
+             headers: @headers
+        assert_response :created
+
+        json = JSON.parse(response.body)
+        assert_not_includes json["content_html"], "<script>"
+        assert_includes json["content_html"], "Safe content"
+      end
     end
   end
 end

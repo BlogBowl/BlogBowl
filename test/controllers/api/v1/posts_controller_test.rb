@@ -278,44 +278,26 @@ module API
         assert json["content_json"]["content"].length > 0
       end
 
-      test "create with JSON auto-converts to HTML" do
-        json_content = {
-          "type" => "doc",
-          "content" => [
-            {
-              "type" => "heading",
-              "attrs" => { "level" => 2 },
-              "content" => [{ "type" => "text", "text" => "JSON Title" }]
-            },
-            {
-              "type" => "paragraph",
-              "content" => [{ "type" => "text", "text" => "JSON paragraph" }]
-            }
-          ]
-        }
-
+      test "create with content_md generates HTML and JSON" do
         post api_v1_page_posts_url(page_id: @page.id),
-             params: { post: { title: "JSON Test", content_json: json_content } },
+             params: { post: { title: "MD Test", content_md: "## Hello\n\nThis is a **paragraph**." } },
              headers: @headers
         assert_response :created
 
         json = JSON.parse(response.body)
-        # Check structure (level might be string due to JSON serialization)
-        assert_equal "doc", json["content_json"]["type"]
-        assert_equal 2, json["content_json"]["content"].length
-        assert_equal "heading", json["content_json"]["content"][0]["type"]
-        assert_equal "paragraph", json["content_json"]["content"][1]["type"]
         assert_not_nil json["content_html"]
         assert_kind_of String, json["content_html"]
-        assert_includes json["content_html"], "JSON Title"
-        assert_includes json["content_html"], "JSON paragraph"
+        assert_includes json["content_html"], "Hello"
+        assert_not_nil json["content_json"]
+        assert_kind_of Hash, json["content_json"]
+        assert_equal "doc", json["content_json"]["type"]
       end
 
       test "update with HTML updates JSON" do
         new_html = '<p>Updated HTML content</p>'
 
         patch api_v1_page_post_url(page_id: @page.id, id: @post1.id),
-              params: { post: { content_html: new_html, content_json: nil } },
+              params: { post: { content_html: new_html } },
               headers: @headers
         assert_response :success
 
@@ -325,48 +307,31 @@ module API
         assert_includes json["content_json"].to_s, "Updated HTML content"
       end
 
-      test "update with JSON updates HTML" do
-        new_json = {
-          "type" => "doc",
-          "content" => [
-            {
-              "type" => "paragraph",
-              "content" => [{ "type" => "text", "text" => "Updated JSON content" }]
-            }
-          ]
-        }
-
+      test "update with content_md updates HTML and JSON" do
         patch api_v1_page_post_url(page_id: @page.id, id: @post1.id),
-              params: { post: { content_json: new_json, content_html: nil } },
+              params: { post: { content_md: "## Updated heading\n\nNew paragraph." } },
               headers: @headers
         assert_response :success
 
         json = JSON.parse(response.body)
-        assert_equal new_json, json["content_json"]
         assert_not_nil json["content_html"]
-        assert_includes json["content_html"], "Updated JSON content"
+        assert_includes json["content_html"], "Updated heading"
+        assert_not_nil json["content_json"]
+        assert_equal "doc", json["content_json"]["type"]
       end
 
-      test "create with both HTML and JSON preserves both" do
-        html_content = '<p>HTML content</p>'
-        json_content = {
-          "type" => "doc",
-          "content" => [
-            {
-              "type" => "paragraph",
-              "content" => [{ "type" => "text", "text" => "JSON content" }]
-            }
-          ]
-        }
+      test "create with HTML strips unsafe tags" do
+        dirty_html = '<p>Safe content</p><script>alert("xss")</script><p onclick="evil()">More safe</p>'
 
         post api_v1_page_posts_url(page_id: @page.id),
-             params: { post: { title: "Both formats", content_html: html_content, content_json: json_content } },
+             params: { post: { title: "Sanitize Test", content_html: dirty_html } },
              headers: @headers
         assert_response :created
 
         json = JSON.parse(response.body)
-        assert_equal html_content, json["content_html"]
-        assert_equal json_content, json["content_json"]
+        assert_not_includes json["content_html"], "<script>"
+        assert_not_includes json["content_html"], "onclick"
+        assert_includes json["content_html"], "Safe content"
       end
 
       test "handles complex HTML structures in conversion" do

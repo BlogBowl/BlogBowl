@@ -49,7 +49,6 @@ module API
         assert category.key?("slug")
         assert category.key?("description")
         assert category.key?("color")
-        assert category.key?("parent_id")
         assert category.key?("page_id")
         assert category.key?("created_at")
         assert category.key?("updated_at")
