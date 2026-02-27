@@ -26,6 +26,7 @@
             "name": "active",
             "type": "boolean",
             "in": "query",
+            "default": true,
             "description": "Filter by active flag (defaults to true)"
           },
           {
@@ -69,34 +70,42 @@
               "properties": {
                 "first_name": {
                   "type": "string",
+                  "default": null,
                   "description": "First name"
                 },
                 "last_name": {
                   "type": "string",
+                  "default": null,
                   "description": "Last name"
                 },
                 "email": {
                   "type": "string",
+                  "default": null,
                   "description": "Author email"
                 },
                 "position": {
                   "type": "string",
+                  "default": null,
                   "description": "Position"
                 },
                 "short_description": {
                   "type": "string",
+                  "default": null,
                   "description": "Short description"
                 },
                 "long_description": {
                   "type": "string",
+                  "default": null,
                   "description": "Long description"
                 },
                 "avatar_picture": {
                   "type": "file",
+                  "default": null,
                   "description": "Avatar image"
                 },
                 "og_image": {
                   "type": "file",
+                  "default": null,
                   "description": "Open Graph image"
                 }
               },
@@ -337,38 +346,47 @@
               "properties": {
                 "first_name": {
                   "type": "string",
+                  "default": null,
                   "description": "First name"
                 },
                 "last_name": {
                   "type": "string",
+                  "default": null,
                   "description": "Last name"
                 },
                 "email": {
                   "type": "string",
+                  "default": null,
                   "description": "Author email"
                 },
                 "position": {
                   "type": "string",
+                  "default": null,
                   "description": "Position"
                 },
                 "short_description": {
                   "type": "string",
+                  "default": null,
                   "description": "Short description"
                 },
                 "long_description": {
                   "type": "string",
+                  "default": null,
                   "description": "Long description"
                 },
                 "active": {
                   "type": "boolean",
+                  "default": null,
                   "description": "Author active flag"
                 },
                 "avatar_picture": {
                   "type": "file",
+                  "default": null,
                   "description": "Avatar image"
                 },
                 "og_image": {
                   "type": "file",
+                  "default": null,
                   "description": "Open Graph image"
                 }
               },
@@ -568,14 +586,17 @@
                 },
                 "slug": {
                   "type": "string",
+                  "default": null,
                   "description": "Category slug"
                 },
                 "description": {
                   "type": "string",
+                  "default": null,
                   "description": "Category description"
                 },
                 "color": {
                   "type": "string",
+                  "default": null,
                   "description": "Category color (hex)"
                 }
               },
@@ -773,18 +794,22 @@
               "properties": {
                 "name": {
                   "type": "string",
+                  "default": null,
                   "description": "Category name"
                 },
                 "slug": {
                   "type": "string",
+                  "default": null,
                   "description": "Category slug"
                 },
                 "description": {
                   "type": "string",
+                  "default": null,
                   "description": "Category description"
                 },
                 "color": {
                   "type": "string",
+                  "default": null,
                   "description": "Category color (hex)"
                 }
               },
@@ -912,6 +937,7 @@
             "name": "status",
             "type": "string",
             "in": "query",
+            "default": null,
             "description": "Filter by status (draft, scheduled, sent, failed)"
           },
           {
@@ -967,18 +993,22 @@
                 },
                 "preview": {
                   "type": "string",
+                  "default": null,
                   "description": "Email preview text"
                 },
                 "content_html": {
                   "type": "string",
+                  "default": null,
                   "description": "Email HTML content"
                 },
                 "content_md": {
                   "type": "string",
+                  "default": null,
                   "description": "Email content in Markdown"
                 },
                 "author_id": {
                   "type": "number",
+                  "default": null,
                   "description": "Author ID"
                 }
               },
@@ -1027,9 +1057,26 @@
                 },
                 "content_json": {
                   "type": "object",
-                  "additionalProperties": true,
-                  "required": true,
-                  "description": "Email JSON content"
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "required": true,
+                      "description": "Document type"
+                    },
+                    "content": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "required": true,
+                      "description": "Content nodes"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "content"
+                  ]
                 },
                 "author_id": {
                   "type": "number",
@@ -1149,9 +1196,26 @@
                 },
                 "content_json": {
                   "type": "object",
-                  "additionalProperties": true,
-                  "required": true,
-                  "description": "Email JSON content"
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "required": true,
+                      "description": "Document type"
+                    },
+                    "content": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "required": true,
+                      "description": "Content nodes"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "content"
+                  ]
                 },
                 "author_id": {
                   "type": "number",
@@ -1238,22 +1302,27 @@
               "properties": {
                 "subject": {
                   "type": "string",
+                  "default": null,
                   "description": "Email subject"
                 },
                 "preview": {
                   "type": "string",
+                  "default": null,
                   "description": "Email preview text"
                 },
                 "content_html": {
                   "type": "string",
+                  "default": null,
                   "description": "Email HTML content"
                 },
                 "content_md": {
                   "type": "string",
+                  "default": null,
                   "description": "Email content in Markdown"
                 },
                 "author_id": {
                   "type": "number",
+                  "default": null,
                   "description": "Author ID"
                 }
               },
@@ -1299,9 +1368,26 @@
                 },
                 "content_json": {
                   "type": "object",
-                  "additionalProperties": true,
-                  "required": true,
-                  "description": "Email JSON content"
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "required": true,
+                      "description": "Document type"
+                    },
+                    "content": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "required": true,
+                      "description": "Content nodes"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "content"
+                  ]
                 },
                 "author_id": {
                   "type": "number",
@@ -1423,6 +1509,7 @@
               "properties": {
                 "scheduled_at": {
                   "type": "string",
+                  "default": null,
                   "description": "Schedule for future (ISO 8601 format). Omit to send immediately."
                 }
               },
@@ -1468,9 +1555,26 @@
                 },
                 "content_json": {
                   "type": "object",
-                  "additionalProperties": true,
-                  "required": true,
-                  "description": "Email JSON content"
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "required": true,
+                      "description": "Document type"
+                    },
+                    "content": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "required": true,
+                      "description": "Content nodes"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "content"
+                  ]
                 },
                 "author_id": {
                   "type": "number",
@@ -1777,6 +1881,7 @@
               "properties": {
                 "name": {
                   "type": "string",
+                  "default": null,
                   "description": "Newsletter name"
                 }
               },
@@ -1894,6 +1999,7 @@
                 },
                 "slug": {
                   "type": "string",
+                  "default": null,
                   "description": "Page slug"
                 }
               },
@@ -2077,10 +2183,12 @@
               "properties": {
                 "name": {
                   "type": "string",
+                  "default": null,
                   "description": "Page name"
                 },
                 "slug": {
                   "type": "string",
+                  "default": null,
                   "description": "Page slug"
                 }
               },
@@ -2175,12 +2283,14 @@
             "name": "status",
             "type": "string",
             "in": "query",
+            "default": null,
             "description": "Filter by status (draft, published, scheduled)"
           },
           {
             "name": "category_id",
             "type": "number",
             "in": "query",
+            "default": null,
             "description": "Filter by category ID"
           },
           {
@@ -2236,42 +2346,52 @@
                 },
                 "content_html": {
                   "type": "string",
+                  "default": null,
                   "description": "Post content in HTML"
                 },
                 "content_md": {
                   "type": "string",
+                  "default": null,
                   "description": "Post content in Markdown"
                 },
                 "description": {
                   "type": "string",
+                  "default": null,
                   "description": "Post description"
                 },
                 "category_id": {
                   "type": "number",
+                  "default": null,
                   "description": "Category ID"
                 },
                 "seo_title": {
                   "type": "string",
+                  "default": null,
                   "description": "SEO title"
                 },
                 "seo_description": {
                   "type": "string",
+                  "default": null,
                   "description": "SEO description"
                 },
                 "og_title": {
                   "type": "string",
+                  "default": null,
                   "description": "Open Graph title"
                 },
                 "og_description": {
                   "type": "string",
+                  "default": null,
                   "description": "Open Graph description"
                 },
                 "cover_image_url": {
                   "type": "string",
+                  "default": null,
                   "description": "Cover image URL"
                 },
                 "og_image_url": {
                   "type": "string",
+                  "default": null,
                   "description": "Open Graph image URL"
                 }
               },
@@ -2320,9 +2440,26 @@
                 },
                 "content_json": {
                   "type": "object",
-                  "additionalProperties": true,
-                  "required": true,
-                  "description": "Post content in TipTap JSON"
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "required": true,
+                      "description": "Document type"
+                    },
+                    "content": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "required": true,
+                      "description": "Content nodes"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "content"
+                  ]
                 },
                 "seo_title": {
                   "type": "string",
@@ -2478,9 +2615,26 @@
                 },
                 "content_json": {
                   "type": "object",
-                  "additionalProperties": true,
-                  "required": true,
-                  "description": "Post content in TipTap JSON"
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "required": true,
+                      "description": "Document type"
+                    },
+                    "content": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "required": true,
+                      "description": "Content nodes"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "content"
+                  ]
                 },
                 "seo_title": {
                   "type": "string",
@@ -2603,46 +2757,57 @@
               "properties": {
                 "title": {
                   "type": "string",
+                  "default": null,
                   "description": "Post title"
                 },
                 "content_html": {
                   "type": "string",
+                  "default": null,
                   "description": "Post content in HTML"
                 },
                 "content_md": {
                   "type": "string",
+                  "default": null,
                   "description": "Post content in Markdown"
                 },
                 "description": {
                   "type": "string",
+                  "default": null,
                   "description": "Post description"
                 },
                 "category_id": {
                   "type": "number",
+                  "default": null,
                   "description": "Category ID"
                 },
                 "seo_title": {
                   "type": "string",
+                  "default": null,
                   "description": "SEO title"
                 },
                 "seo_description": {
                   "type": "string",
+                  "default": null,
                   "description": "SEO description"
                 },
                 "og_title": {
                   "type": "string",
+                  "default": null,
                   "description": "Open Graph title"
                 },
                 "og_description": {
                   "type": "string",
+                  "default": null,
                   "description": "Open Graph description"
                 },
                 "cover_image_url": {
                   "type": "string",
+                  "default": null,
                   "description": "Cover image URL"
                 },
                 "og_image_url": {
                   "type": "string",
+                  "default": null,
                   "description": "Open Graph image URL"
                 }
               },
@@ -2688,9 +2853,26 @@
                 },
                 "content_json": {
                   "type": "object",
-                  "additionalProperties": true,
-                  "required": true,
-                  "description": "Post content in TipTap JSON"
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "required": true,
+                      "description": "Document type"
+                    },
+                    "content": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "required": true,
+                      "description": "Content nodes"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "content"
+                  ]
                 },
                 "seo_title": {
                   "type": "string",
@@ -2848,6 +3030,7 @@
               "properties": {
                 "scheduled_at": {
                   "type": "string",
+                  "default": null,
                   "description": "Schedule publish for a future date (ISO 8601)"
                 }
               },
@@ -2893,9 +3076,26 @@
                 },
                 "content_json": {
                   "type": "object",
-                  "additionalProperties": true,
-                  "required": true,
-                  "description": "Post content in TipTap JSON"
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "required": true,
+                      "description": "Document type"
+                    },
+                    "content": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "required": true,
+                      "description": "Content nodes"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "content"
+                  ]
                 },
                 "seo_title": {
                   "type": "string",
@@ -3009,12 +3209,14 @@
             "name": "status",
             "type": "string",
             "in": "query",
+            "default": null,
             "description": "Filter by status"
           },
           {
             "name": "verified",
             "type": "boolean",
             "in": "query",
+            "default": null,
             "description": "Filter by verification status"
           },
           {
@@ -3070,6 +3272,7 @@
                 },
                 "note": {
                   "type": "string",
+                  "default": null,
                   "description": "Optional note"
                 }
               },
