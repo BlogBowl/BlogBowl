@@ -17,6 +17,7 @@ FileUtils.chdir APP_ROOT do
 
   # Install JavaScript dependencies
   system!("bun install")
+  system!("bun install --cwd submodules/core/lib/tiptap")
 
   # puts "\n== Copying sample files =="
   # unless File.exist?("config/database.yml")

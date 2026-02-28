@@ -4,6 +4,7 @@ module API
   module V1
     class BaseControllerTest < ActionDispatch::IntegrationTest
       setup do
+        Rack::Attack.reset!
         @user = users(:default_user)
         @workspace = workspaces(:default_user_workspace)
 
@@ -65,18 +66,21 @@ module API
       test "should return rate limit error after 1000 requests" do
         limit = 1000
         test_ip = "1.2.3.4"
+        period = 1.minute.to_i
 
         request_headers = {
           "Authorization" => "Bearer #{@token.token}",
           "REMOTE_ADDR" => test_ip
         }
 
-        # Send 'limit' number of successful requests (1 to 1000)
-        limit.times do |i|
-          # Use `get` and ensure each request is successful (200 OK)
-          get api_v1_pages_url, headers: request_headers
-          assert_response :success, "Request #{i + 1} failed unexpectedly."
-        end
+        # Pre-fill the Rack::Attack counter to one below the limit.
+        # Making 999 real HTTP requests would be too slow in CI and risks
+        # spanning the 1-minute throttle window, causing flaky failures.
+        (limit - 1).times { Rack::Attack.cache.count("api/v1/ip:#{test_ip}", period) }
+
+        # The 1000th request should still succeed (counter reaches limit, not exceeded)
+        get api_v1_pages_url, headers: request_headers
+        assert_response :success, "The 1000th request was unexpectedly rate-limited."
 
         # The 1001st request should be rate-limited (HTTP 429 Too Many Requests)
         get api_v1_pages_url, headers: request_headers

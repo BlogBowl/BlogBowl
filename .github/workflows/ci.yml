@@ -125,6 +125,7 @@ jobs:
         run: |
           npm install -g bun &&
           bun install &&
+          bun install --cwd submodules/core/lib/tiptap &&
           bundle install
 
       - name: Precompile assets
