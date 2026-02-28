@@ -25,3 +25,15 @@ page_settings_with_subscribers:
   seo_description: MyText
   template: basic
   newsletter: newsletter_with_subscribers
+
+default_user_page_1_settings:
+  page: default_user_page_1
+  seo_title: MyText
+  seo_description: MyText
+  template: basic
+
+default_user_page_2_settings:
+  page: default_user_page_2
+  seo_title: MyText
+  seo_description: MyText
+  template: basic

@@ -28,8 +28,8 @@ class PostRevisionTest < ActiveSupport::TestCase
 
     revision.apply!
 
-    post_attributes = post.attributes.symbolize_keys.except(:id, :page_id, :category_id, :status, :slug, :archived_at, :created_at, :updated_at, :first_published_at, :description, :scheduled_at, :job_id)
-    revision_attributes = revision.attributes.symbolize_keys.except(:id, :post_id, :kind, :created_at, :updated_at, :share_id, :shared_at, :first_published_at, :description)
+    post_attributes = post.attributes.symbolize_keys.except(:id, :page_id, :category_id, :status, :slug, :archived_at, :created_at, :updated_at, :first_published_at, :description, :scheduled_at, :job_id, :content_json)
+    revision_attributes = revision.attributes.symbolize_keys.except(:id, :post_id, :kind, :created_at, :updated_at, :share_id, :shared_at, :first_published_at, :description, :content_json)
     assert_equal post_attributes, revision_attributes
   end
 

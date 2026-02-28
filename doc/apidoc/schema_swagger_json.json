@@ -2836,11 +2836,6 @@
                   "type": "string",
                   "required": true,
                   "description": "Subscriber email"
-                },
-                "note": {
-                  "type": "string",
-                  "default": null,
-                  "description": "Optional note"
                 }
               },
               "additionalProperties": false,

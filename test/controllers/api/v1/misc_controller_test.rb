@@ -5,6 +5,10 @@ module API
     class MiscControllerTest < ActionDispatch::IntegrationTest
       SPEC_PATH = Rails.root.join("doc", "apidoc", "schema_swagger_json.json")
 
+      setup do
+        host! "example.com"
+      end
+
       test "openapi returns the spec without authentication" do
         get "/api/v1/misc/openapi.json"
         assert_response :success
