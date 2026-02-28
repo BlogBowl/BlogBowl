@@ -75,7 +75,7 @@ module API
 
       # === CREATE (Upsert) ===
 
-      test "create creates new subscriber" do
+      test "create creates new subscriber as active and verified" do
         assert_difference("@newsletter.subscribers.count", 1) do
           post api_v1_newsletter_subscribers_url(newsletter_id: @newsletter.id),
                params: { subscriber: { email: "new@example.com" } },
@@ -85,7 +85,9 @@ module API
 
         json = JSON.parse(response.body)
         assert_equal "new@example.com", json["email"]
-        assert_equal "pending", json["status"]
+        assert_equal "active", json["status"]
+        assert_equal true, json["verified"]
+        assert_not_nil json["verified_at"]
       end
 
       test "create returns existing subscriber (upsert)" do

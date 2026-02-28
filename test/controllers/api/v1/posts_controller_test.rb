@@ -10,6 +10,7 @@ module API
         @post1 = posts(:default_user_post_1)
         @post2 = posts(:default_user_post_2)
         @category = categories(:default_user_category_1)
+        @author = authors(:default_user_author)
 
         @token = APIToken.create!(name: "Test Token", user: @user, workspace: @workspace)
         @headers = { "Authorization" => "Bearer #{@token.token}" }
@@ -62,7 +63,7 @@ module API
         assert post.key?("status")
         assert post.key?("description")
         assert post.key?("content_html")
-        assert post.key?("content_json")
+        assert_not post.key?("content_json"), "content_json should not be exposed in public API"
         assert post.key?("seo_title")
         assert post.key?("seo_description")
         assert post.key?("og_title")
@@ -184,53 +185,77 @@ module API
         assert_response :not_found
       end
 
-      # === PUBLISH ===
+      # === STATUS (publish via create/update) ===
 
-      test "publish publishes a draft post" do
+      test "create with status published publishes post immediately" do
+        post api_v1_page_posts_url(page_id: @page.id),
+             params: { title: "Published Post", author_id: @author.id, status: "published" },
+             headers: @headers
+        assert_response :created
+
+        json = JSON.parse(response.body)
+        assert_equal "published", json["status"]
+        assert_not_nil json["first_published_at"]
+      end
+
+      test "update with status published transitions draft to published" do
         assert_equal "draft", @post1.status
 
-        post publish_api_v1_page_post_url(page_id: @page.id, id: @post1.id), headers: @headers
+        patch api_v1_page_post_url(page_id: @page.id, id: @post1.id),
+              params: { status: "published" },
+              headers: @headers
         assert_response :success
 
         json = JSON.parse(response.body)
         assert_equal "published", json["status"]
-        assert json["first_published_at"].present?
+        assert_not_nil json["first_published_at"]
 
         @post1.reload
         assert_equal "published", @post1.status
+        assert_not_nil @post1.first_published_at
       end
 
-      test "publish is idempotent for already published post" do
-        post publish_api_v1_page_post_url(page_id: @page.id, id: @post2.id), headers: @headers
+      test "update with status published is idempotent for already published post" do
+        assert_equal "published", @post2.status
+        original_published_at = @post2.first_published_at
+
+        patch api_v1_page_post_url(page_id: @page.id, id: @post2.id),
+              params: { status: "published" },
+              headers: @headers
         assert_response :success
 
-        json = JSON.parse(response.body)
-        assert_equal "published", json["status"]
+        @post2.reload
+        assert_equal original_published_at.to_s, @post2.first_published_at.to_s
       end
 
-      test "publish with scheduled_at schedules the post" do
-        scheduled_time = 1.day.from_now.iso8601
-
-        post publish_api_v1_page_post_url(page_id: @page.id, id: @post1.id),
-             params: { scheduled_at: scheduled_time },
-             headers: @headers
-        assert_response :success
-
-        json = JSON.parse(response.body)
-        assert_equal "scheduled", json["status"]
-        assert json["scheduled_at"].present?
-      end
-
-      test "publish with past scheduled_at returns error" do
-        past_time = 1.day.ago.iso8601
-
-        post publish_api_v1_page_post_url(page_id: @page.id, id: @post1.id),
-             params: { scheduled_at: past_time },
+      test "create with status published without author returns validation error" do
+        post api_v1_page_posts_url(page_id: @page.id),
+             params: { title: "No Author", status: "published" },
              headers: @headers
         assert_response :unprocessable_entity
 
         json = JSON.parse(response.body)
-        assert json.key?("error")
+        assert json.key?("errors")
+      end
+
+      # === AUTHOR ===
+
+      test "create with author_id assigns author to post" do
+        post api_v1_page_posts_url(page_id: @page.id),
+             params: { title: "Authored Post", author_id: @author.id },
+             headers: @headers
+        assert_response :created
+
+        created_post = Post.last
+        assert_equal 1, created_post.authors.count
+        assert_equal @author.id, created_post.authors.first.id
+      end
+
+      test "create with invalid author_id returns 404" do
+        post api_v1_page_posts_url(page_id: @page.id),
+             params: { title: "Bad Author", author_id: 999999 },
+             headers: @headers
+        assert_response :not_found
       end
 
       # === AUTHENTICATION ===
@@ -257,10 +282,12 @@ module API
 
         json = JSON.parse(response.body)
         assert_equal html_content, json["content_html"]
-        assert_not_nil json["content_json"]
-        assert_kind_of Hash, json["content_json"]
-        assert_equal "doc", json["content_json"]["type"]
-        assert json["content_json"]["content"].length > 0
+        assert_not json.key?("content_json"), "content_json should not be in API response"
+
+        created_post = Post.last
+        assert_not_nil created_post.content_json
+        assert_equal "doc", created_post.content_json["type"]
+        assert created_post.content_json["content"].length > 0
       end
 
       test "create with JSON auto-converts to HTML" do
@@ -285,15 +312,16 @@ module API
         assert_response :created
 
         json = JSON.parse(response.body)
-        # Check structure (level might be string due to JSON serialization)
-        assert_equal "doc", json["content_json"]["type"]
-        assert_equal 2, json["content_json"]["content"].length
-        assert_equal "heading", json["content_json"]["content"][0]["type"]
-        assert_equal "paragraph", json["content_json"]["content"][1]["type"]
+        assert_not json.key?("content_json"), "content_json should not be in API response"
         assert_not_nil json["content_html"]
-        assert_kind_of String, json["content_html"]
         assert_includes json["content_html"], "JSON Title"
         assert_includes json["content_html"], "JSON paragraph"
+
+        created_post = Post.last
+        assert_equal "doc", created_post.content_json["type"]
+        assert_equal 2, created_post.content_json["content"].length
+        assert_equal "heading", created_post.content_json["content"][0]["type"]
+        assert_equal "paragraph", created_post.content_json["content"][1]["type"]
       end
 
       test "update with HTML updates JSON" do
@@ -306,8 +334,11 @@ module API
 
         json = JSON.parse(response.body)
         assert_equal new_html, json["content_html"]
-        assert_not_nil json["content_json"]
-        assert_includes json["content_json"].to_s, "Updated HTML content"
+        assert_not json.key?("content_json"), "content_json should not be in API response"
+
+        @post1.reload
+        assert_not_nil @post1.content_json
+        assert_includes @post1.content_json.to_s, "Updated HTML content"
       end
 
       test "update with JSON updates HTML" do
@@ -327,9 +358,12 @@ module API
         assert_response :success
 
         json = JSON.parse(response.body)
-        assert_equal new_json, json["content_json"]
+        assert_not json.key?("content_json"), "content_json should not be in API response"
         assert_not_nil json["content_html"]
         assert_includes json["content_html"], "Updated JSON content"
+
+        @post1.reload
+        assert_equal new_json, @post1.content_json
       end
 
       test "create with both HTML and JSON preserves both" do
@@ -351,7 +385,7 @@ module API
 
         json = JSON.parse(response.body)
         assert_equal html_content, json["content_html"]
-        assert_equal json_content, json["content_json"]
+        assert_not json.key?("content_json"), "content_json should not be in API response"
       end
 
       test "handles complex HTML structures in conversion" do
@@ -370,12 +404,14 @@ module API
              headers: @headers
         assert_response :created
 
-        json = JSON.parse(response.body)
-        assert_not_nil json["content_json"]
-        assert json["content_json"]["content"].length > 1
+        assert_response :created
+        assert_not JSON.parse(response.body).key?("content_json"), "content_json should not be in API response"
 
-        # Verify structure includes heading, paragraph, list, etc.
-        types = json["content_json"]["content"].map { |c| c["type"] }
+        created_post = Post.last
+        assert_not_nil created_post.content_json
+        assert created_post.content_json["content"].length > 1
+
+        types = created_post.content_json["content"].map { |c| c["type"] }
         assert_includes types, "heading"
         assert_includes types, "paragraph"
       end
@@ -389,10 +425,13 @@ module API
         assert_response :success
 
         json = JSON.parse(response.body)
-        post = json["result"].find { |p| p["id"] == @post1.id }
+        post_json = json["result"].find { |p| p["id"] == @post1.id }
 
-        assert_not_nil post["content_html"]
-        assert_not_nil post["content_json"]
+        assert_not_nil post_json["content_html"]
+        assert_not post_json.key?("content_json"), "content_json should not be in API response"
+
+        @post1.reload
+        assert_not_nil @post1.content_json
       end
     end
   end
