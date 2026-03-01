@@ -227,7 +227,7 @@ module API
 
       test "create with content_md generates HTML and JSON" do
         post api_v1_page_posts_url(page_id: @page.id),
-             params: { post: { title: "MD Test", content_md: "## Hello\n\nThis is a **paragraph**." } },
+             params: { title: "MD Test", content_md: "## Hello\n\nThis is a **paragraph**." },
              headers: @headers
         assert_response :created
 
