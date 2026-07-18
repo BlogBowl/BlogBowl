@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_28_132520) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_18_101006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -280,11 +280,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_28_132520) do
     t.datetime "updated_at", null: false
     t.datetime "scheduled_at"
     t.string "job_id"
+    t.jsonb "faq_answers", default: []
+    t.string "redirect_url"
+    t.bigint "redirect_post_id"
     t.index ["category_id"], name: "index_posts_on_category_id"
     t.index ["job_id"], name: "index_posts_on_job_id", unique: true
     t.index ["page_id", "first_published_at"], name: "index_posts_on_page_id_and_first_published_at"
     t.index ["page_id", "slug"], name: "index_posts_on_page_id_and_slug", unique: true
     t.index ["page_id"], name: "index_posts_on_page_id"
+    t.index ["redirect_post_id"], name: "index_posts_on_redirect_post_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -378,6 +382,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_28_132520) do
   add_foreign_key "post_revisions", "posts", on_delete: :cascade
   add_foreign_key "posts", "categories", on_delete: :nullify
   add_foreign_key "posts", "pages", on_delete: :cascade
+  add_foreign_key "posts", "posts", column: "redirect_post_id", on_delete: :nullify
   add_foreign_key "sessions", "users"
   add_foreign_key "subscribers", "newsletters", on_delete: :cascade
   add_foreign_key "subscribers", "pages", on_delete: :nullify
