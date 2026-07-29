@@ -35,7 +35,7 @@ jobs:
     steps:
       # Step 1: Check out the repository's code at the specific tag of the release.
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         # CRITICAL: This ensures that your submodule (the core engine) is
         # checked out along with the parent repository.
         with:
